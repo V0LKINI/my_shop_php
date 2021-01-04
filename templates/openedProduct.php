@@ -6,9 +6,9 @@
         <?php echo $good['name']; ?>
     </h1>
     <div id="openedProduct-desc">
-        <?php echo $good['desc']; ?>
+        <?php echo $good['description']; ?>
     </div>
     <div id="openedProduct-price">
-        <?php echo $good['price']; ?>
+        <?php echo $good['price'] . '$'; ?>
     </div>
 </div>

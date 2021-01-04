@@ -10,10 +10,10 @@
            <?php echo $good['name']; ?>
         </div>
         <div class="shopUnitShortDesc">
-            <?php echo $good['desc']; ?>
+            <?php echo $good['description']; ?>
         </div>
         <div class="shopUnitPrice">
-           <?php echo $good['price']; ?>
+           <?php echo $good['price'] . '$'; ?>
         </div>
         <a href="index.php?page=product&id=<?php echo $good['id']; ?>" class="shopUnitMore">
             Подробнее
