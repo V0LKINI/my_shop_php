@@ -1,5 +1,9 @@
 <?php
 
+session_start();
+
+require('connection.php');
+
 if (!$connection) {
     // Если проверку не прошло, то выводится надпись ошибки и заканчивается работа скрипта
     echo "Не удается подключиться к серверу базы данных!"; 
@@ -10,6 +14,12 @@ $error = [];
 
 // Проверяем нажата ли кнопка отправки формы
 if (isset($_POST['submit'])) {
+
+    $login = $_POST['login'];
+    $email = $_POST['email'];
+    //Пароль хешируется
+    $pass = md5(md5($_POST['pass']));
+
     // Все последующие проверки, проверяют форму и выводят ошибку
     // Проверка на совпадение паролей
     if ($_POST['pass'] !== $_POST['pass_rep']) {
@@ -42,7 +52,6 @@ if (isset($_POST['submit'])) {
     }
     
     //Проверка не занят ли логин
-    $login = $_POST['login'];
     $query_reg = "SELECT * FROM users WHERE login = '$login';";
     $query_reg_result = mysqli_query($connection, $query_reg);
     $count = mysqli_num_rows($query_reg_result);
@@ -50,12 +59,18 @@ if (isset($_POST['submit'])) {
          $error []= 'Логин уже используется';
     }
 
+    //Проверка не занят ли email
+    $query_reg = "SELECT * FROM users WHERE email = '$email';";
+    $query_reg_result = mysqli_query($connection, $query_reg);
+    $count = mysqli_num_rows($query_reg_result);
+    if ($count != 0) {
+         $error []= 'Email уже используется';
+    }
+
     // Если ошибок нет, то происходит регистрация 
     if (!$error) {
-        // Пароль хешируется
-        $pass = md5($_POST['pass']);
-        $query = "INSERT INTO users (login, password) VALUES 
-        ('$login', '$pass');";
+
+        $query = "INSERT INTO users SET login='$login', password='$pass', email='$email';";
         // Добавление пользователя
         $query_result = mysqli_query($connection, $query);
 
@@ -63,34 +78,48 @@ if (isset($_POST['submit'])) {
             die("Query failed ".mysqli_error());
         } else{ 
             // Подтверждение что всё хорошо
-            echo 'Регистрация прошла успешна' ;
+            $suc_reg = "Регистрация прошла успешна <br>".
+            "Вы можете авторизироваться <a href='index.php?page=login'>здесь</a>";
+
         }
 
-    } else {
+    } 
+}
+ 
+?>
+
+<?php 
+
+require('../templates/header.php');
+
+if (isset($suc_reg)) {
+    echo $suc_reg;
+}else {
         // Если ошибки есть, то выводить их все поочереди
         foreach ($error as  $value) {
              echo $value . '<br>';
          } 
     }
-}
- 
-?>
 
+?>
 
 <div class="container mt-4">
         <div class="row">
             <div class="col">
                <!-- Форма регистрации -->
-                <h2>Форма регистрации</h2>
+                <h2>Регистрация</h2>
                 <form method="post">
-                    <input type="text" class="form-control" name="login" id="login" placeholder="Введите логин"><br>
+                    <input type="email" class="form-control" name="email" placeholder="Введите email"><br>
+                    <input type="text" class="form-control" name="login" placeholder="Введите логин"><br>
                     <input type="password" class="form-control" name="pass" placeholder="Введите пароль"><br>
                     <input type="password" class="form-control" name="pass_rep" placeholder="Повторите пароль"><br>
                     <button class="btn btn-success" name="submit" type="submit">Зарегистрировать</button>
                 </form>
                 <br>
-                <p>Если вы зарегистрированы, тогда нажмите <a href="index.php?page=login">здесь</a>.</p>
-                <p>Вернуться на <a href="../../index.php">главную</a>.</p>
+                <p>Если вы уже зарегистрированы, тогда нажмите <a href="login.php">здесь</a>.</p>
+                <p>Вернуться на <a href="../index.php">главную</a>.</p>
             </div>
         </div>
 </div>
+
+<?php require('../templates/footer.php');?>

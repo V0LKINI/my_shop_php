@@ -1,42 +1,99 @@
 <?php
-
 // Страница авторизации
+
+session_start();
+
+require('connection.php');
 
 if(isset($_POST['submit']))
 {
     # Вытаскиваем из БД запись, у которой логин равняеться введенному
-    $login = $_POST['login'];
-    $query_log = "SELECT login, password FROM users WHERE login='$login' LIMIT 1;";
+    $login_or_email = $_POST['data'];
+    $query_log = "SELECT login, password, email FROM users WHERE login='$login_or_email' OR
+    	 email='$login_or_email'  LIMIT 1;";
     $query_log_result = mysqli_query($connection, $query_log);
     $data = mysqli_fetch_assoc($query_log_result);
     
     # Сравниваем пароли
-    if($data['password'] == md5($_POST['password']))
-    {
-        echo "Вы успешно авторизированы!";
-        //Далее будет ещё какой-то код
+    if($data['password'] == md5(md5($_POST['password'])))
+    {   
+    	$email = $data['email'];
+
+    	if($_POST['remember_me'])
+        {
+        	
+		    //Создаём токен
+		    $password_cookie_token = md5($data["id"].$data['password'].time());
+		    
+		    //Добавляем созданный токен в базу данных 
+		    $update_password_cookie_token_query = "UPDATE users SET password_cookie_token='$password_cookie_token' WHERE email = '$email'";
+		 	$update_password_cookie_token = mysqli_query($connection, $update_password_cookie_token_query);
+		    
+		    if(!$update_password_cookie_token){
+		        $error = 'Не удалось запомнить пользователя';
+			    }
+		 		
+		    //Устанавливаем куку с токеном
+		    setcookie("password_cookie_token", $password_cookie_token, time() + (1000 * 60 * 60 * 24 * 30),'/');
+        }else{	
+		    //Если галочка "запомнить меня" не была поставлена, то мы удаляем куки
+		    if(isset($_COOKIE["password_cookie_token"])){	
+		        //Очищаем поле password_cookie_token из базы данных
+		        $update_password_cookie_token_query = "UPDATE users SET password_cookie_token='' WHERE email = '$email'";
+		 		$update_password_cookie_token = mysqli_query($connection, $update_password_cookie_token_query);
+		 
+		        //Удаляем куку password_cookie_token
+        		setcookie("password_cookie_token", null, -1, '/');
+    		}
+     
+		}
+        
+
+        #Запоминаем логин в сессии
+    	$_SESSION['login'] = $data['login'];
+
+    	// #Автоматический переход на главную страницу
+    	header('Location: http://brandshop/');
     }
     else
     {
-        echo "Вы ввели неправильный логин/пароль";
+        $error = "Вы ввели неправильный логин/пароль";
     }
 }
 ?>
+
+
+
+<!-- Отображение ошибок -->
+
+<?php 
+require('../templates/header.php');
+if (isset($error)) {
+	echo $error;
+}
+?>
+
+
+<!-- Ниже идёт отображение контента на сайте -->
+
 
 
 <div class="container mt-4">
 	<div class="row">
 		<div class="col">
 		<!-- Форма авторизации -->
-		<h2>Форма авторизации</h2>
+		<h2>Авторизация</h2>
 		<form method="post">
-			<input type="text" class="form-control" name="login" id="login" placeholder="Введите логин" required><br>
-			<input type="password" class="form-control" name="password" id="pass" placeholder="Введите пароль" required><br>
+			<input type="text" class="form-control" name="data" placeholder="Введите логин или email" required><br>
+			<input type="password" class="form-control" name="password" placeholder="Введите пароль" required><br>
+			<input type="checkbox" name="remember_me"> Запомнить меня<br><br>
 			<button class="btn btn-success" name="submit" type="submit">Авторизоваться</button>
 		</form>
 		<br>
-		<p>Если вы еще не зарегистрированы, тогда нажмите <a href="../index.php?page=register">здесь</a>.</p>
+		<p>Если вы еще не зарегистрированы, тогда нажмите <a href="register.php">здесь</a>.</p>
 		<p>Вернуться на <a href="../index.php">главную</a>.</p>
 		</div>
 	</div>
 </div>
+
+<?php require('../templates/footer.php');?>
