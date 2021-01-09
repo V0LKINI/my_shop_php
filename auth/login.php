@@ -89,8 +89,6 @@ if(isset($_POST['submit']))
 }
 ?>
 
-
-
 <!-- Отображение ошибок -->
 
 <?php 
@@ -100,19 +98,19 @@ if (isset($error)) {
 }
 ?>
 
-
 <!-- Ниже идёт отображение контента на сайте -->
 
 <div class="container mt-4">
 	<div class="row">
 		<div class="col">
 		<!-- Форма авторизации -->
-		<h2>Авторизация</h2>
+		<h2>Вход на сайт</h2>
 		<form method="post">
 			<input type="text" class="form-control" name="data" placeholder="Введите логин или email" required><br>
 			<input type="password" class="form-control" name="password" placeholder="Введите пароль" required><br>
-			<input type="checkbox" name="remember_me"> Запомнить меня<br><br>
-			<button class="btn btn-success" name="submit" type="submit">Авторизоваться</button>
+			<input type="checkbox" name="remember_me"> Запомнить меня    
+			<a style="margin-left:20px;" href="reset_password.php">Забыли пароль?</a><br><br>
+			<button class="btn btn-success" name="submit" type="submit">Войти</button>
 		</form>
 		<br>
 		<p>Если вы еще не зарегистрированы, тогда нажмите <a href="register.php">здесь</a>.</p>
