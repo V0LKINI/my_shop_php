@@ -7,53 +7,80 @@ require('connection.php');
 
 if(isset($_POST['submit']))
 {
+
+	//Удаляем пользователей из таблицы users, которые не подтвердили свою почту в течении суток
+    $query_delete_users = "DELETE FROM users WHERE email_status IS NULL 
+                                    AND registration_date < ( NOW() - INTERVAL 1 DAY );";                             
+    $query_delete_users_result = mysqli_query($connection, $query_delete_users);
+    if(!$query_delete_users_result){
+        exit("<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта.</p>");
+    }
+
+    //Удаляем пользователей из таблицы confirm_user, которые не подтвердили свою почту в течении суток
+    $query_delete_confirm_users = "DELETE FROM confirm_user WHERE registration_date < ( NOW() - INTERVAL 1 DAY );";
+    $query_delete_confirm_users_result = mysqli_query($connection, $query_delete_confirm_users);
+    if(!$query_delete_confirm_users_result){
+        exit("<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта(confirm).</p>");
+    }
+
     # Вытаскиваем из БД запись, у которой логин равняеться введенному
     $login_or_email = $_POST['data'];
-    $query_log = "SELECT login, password, email FROM users WHERE login='$login_or_email' OR
+    $query_log = "SELECT login, password, email, email_status FROM users WHERE login='$login_or_email' OR
     	 email='$login_or_email'  LIMIT 1;";
     $query_log_result = mysqli_query($connection, $query_log);
     $data = mysqli_fetch_assoc($query_log_result);
-    
     # Сравниваем пароли
     if($data['password'] == md5(md5($_POST['password'])))
     {   
-    	$email = $data['email'];
+    	if($data['email_status'] != 1){
+ 
+            // Сохраняем в сессию сообщение об ошибке. 
+            $_SESSION["error_messages"] = "<p class='mesage_error' >Вы зарегистрированы, но, Ваш почтовый адрес не подтверждён. Для подтверждения почты перейдите по ссылке из письма, которую получили после регистрации.</p>
+                <p><strong>Внимание!</strong> Ссылка для подтверждения почты, действительна 24 часа с момента регистрации. Если Вы не подтвердите Ваш email в течении этого времени, то Ваш аккаунт будет удалён.</p>";
+ 
+            //Останавливаем скрипт
+            $error = "<p><strong>Пожалуйста, подтвердите свою почту.</strong></p>";
+ 		} else { //Если почта подтверждена
+ 			
+ 			$email = $data['email'];
 
-    	if($_POST['remember_me'])
-        {
-        	
-		    //Создаём токен
-		    $password_cookie_token = md5($data["id"].$data['password'].time());
-		    
-		    //Добавляем созданный токен в базу данных 
-		    $update_password_cookie_token_query = "UPDATE users SET password_cookie_token='$password_cookie_token' WHERE email = '$email'";
-		 	$update_password_cookie_token = mysqli_query($connection, $update_password_cookie_token_query);
-		    
-		    if(!$update_password_cookie_token){
-		        $error = 'Не удалось запомнить пользователя';
-			    }
-		 		
-		    //Устанавливаем куку с токеном
-		    setcookie("password_cookie_token", $password_cookie_token, time() + (1000 * 60 * 60 * 24 * 30),'/');
-        }else{	
-		    //Если галочка "запомнить меня" не была поставлена, то мы удаляем куки
-		    if(isset($_COOKIE["password_cookie_token"])){	
-		        //Очищаем поле password_cookie_token из базы данных
-		        $update_password_cookie_token_query = "UPDATE users SET password_cookie_token='' WHERE email = '$email'";
-		 		$update_password_cookie_token = mysqli_query($connection, $update_password_cookie_token_query);
-		 
-		        //Удаляем куку password_cookie_token
-        		setcookie("password_cookie_token", null, -1, '/');
-    		}
-     
-		}
-        
+	    	if($_POST['remember_me'])
+	        {
+	        	
+			    //Создаём токен
+			    $password_cookie_token = md5($data["id"].$data['password'].time());
+			    
+			    //Добавляем созданный токен в базу данных 
+			    $update_password_cookie_token_query = "UPDATE users SET password_cookie_token='$password_cookie_token' WHERE email = '$email'";
+			 	$update_password_cookie_token = mysqli_query($connection, $update_password_cookie_token_query);
+			    
+			    if(!$update_password_cookie_token){
+			        $error = 'Не удалось запомнить пользователя';
+				    }
+			 		
+			    //Устанавливаем куку с токеном
+			    setcookie("password_cookie_token", $password_cookie_token, time() + (1000 * 60 * 60 * 24 * 30),'/');
+	        }else{	
+			    //Если галочка "запомнить меня" не была поставлена, то мы удаляем куки
+			    if(isset($_COOKIE["password_cookie_token"])){	
+			        //Очищаем поле password_cookie_token из базы данных
+			        $update_password_cookie_token_query = "UPDATE users SET password_cookie_token='' WHERE email = '$email'";
+			 		$update_password_cookie_token = mysqli_query($connection, $update_password_cookie_token_query);
+			 
+			        //Удаляем куку password_cookie_token
+	        		setcookie("password_cookie_token", null, -1, '/');
+	    		}
+	     
+			}
+	        
 
-        #Запоминаем логин в сессии
-    	$_SESSION['login'] = $data['login'];
+	        #Запоминаем логин в сессии
+	    	$_SESSION['login'] = $data['login'];
 
-    	// #Автоматический переход на главную страницу
-    	header('Location: http://brandshop/');
+	    	// #Автоматический переход на главную страницу
+	    	header('Location: http://brandshop/');
+	 		}
+    	
     }
     else
     {
@@ -75,8 +102,6 @@ if (isset($error)) {
 
 
 <!-- Ниже идёт отображение контента на сайте -->
-
-
 
 <div class="container mt-4">
 	<div class="row">
