@@ -114,7 +114,6 @@ if (isset($error)) {
 		</form>
 		<br>
 		<p>Если вы еще не зарегистрированы, тогда нажмите <a href="register.php">здесь</a>.</p>
-		<p>Вернуться на <a href="../index.php">главную</a>.</p>
 		</div>
 	</div>
 </div>
