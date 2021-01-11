@@ -129,5 +129,5 @@ if(($row = mysqli_fetch_assoc($query_select_user)) != false){
     exit("<p><strong>Ошибка!</strong> Сбой при выборе пользователя из БД. </p>");
 }
  
-
+mysqli_close ($connection);
 ?>

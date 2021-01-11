@@ -1,13 +1,13 @@
 <?php
 
 session_start();
-
-require('connection.php');
+$title="Регистрация";
+require_once('connection.php');
 
 if (!$connection) {
     // Если проверку не прошло, то выводится надпись ошибки и заканчивается работа скрипта
     echo "Не удается подключиться к серверу базы данных!"; 
-    exit;
+    exit();
 }
 
 $error = [];
@@ -23,32 +23,38 @@ if (isset($_POST['submit'])) {
     // Все последующие проверки, проверяют форму и выводят ошибку
     // Проверка на совпадение паролей
     if ($_POST['pass'] !== $_POST['pass_rep']) {
-        $error []= 'Пароли не совпадает';
+        $error []= '<strong>Пароли не совпадает</strong>';
     }
     
     // Проверка есть ли вообще повторный пароль
     if (!$_POST['pass_rep']) {
-        $error [] = 'Введите повторный пароль';
+        $error [] = '<strong>Введите повторный пароль</strong>';
     }
     
     // Проверка есть ли пароль
     if (!$_POST['pass']) {
-        $error []= 'Введите пароль';
+        $error []= '<strong>Введите пароль</strong>';
     }
  
     // Проверка есть ли логин
     if (!$_POST['login']) {
-        $error []= 'Введите логин';
+        $error []= '<strong>Введите логин</strong>';
     }
 
     //Проверка длины логина
     if (mb_strlen($_POST['login']) < 5 or mb_strlen($_POST['login'])>30) {
-        $error []= 'Логин дожен быть от 5 до 30 символов';
+        $error []= '<strong>Логин дожен быть от 5 до 30 символов</strong>';
     }
 
     //Проверка длины пароля
-    if (mb_strlen($_POST['pass']) < 5 or mb_strlen($_POST['pass'])>90) {
-        $error []= 'Пароль дожен быть от 5 до 30 символов';
+    if (mb_strlen($_POST['pass']) < 6 or mb_strlen($_POST['pass'])>90) {
+        $error []= '<strong>Пароль дожен быть от 6 до 30 символов</strong>';
+    }
+
+    //Проверка валидности почты
+    if (filter_var($email, FILTER_VALIDATE_EMAIL) === false)
+    {
+      $error []= '<strong>Неверно указан email!</strong>';
     }
     
     //Проверка не занят ли логин
@@ -56,7 +62,7 @@ if (isset($_POST['submit'])) {
     $query_result = mysqli_query($connection, $query);
     $count = mysqli_num_rows($query_result);
     if ($count != 0) {
-         $error []= 'Логин уже используется';
+         $error []= '<strong>Логин уже используется</strong>';
     }
 
     //Проверка не занят ли email
@@ -64,7 +70,7 @@ if (isset($_POST['submit'])) {
     $query_result = mysqli_query($connection, $query);
     $count = mysqli_num_rows($query_result);
     if ($count != 0) {
-         $error []= 'Email уже используется';
+         $error []= '<strong>Email уже используется</strong>';
     }
 
     // Если ошибок нет, то происходит регистрация 
@@ -91,7 +97,7 @@ if (isset($_POST['submit'])) {
             $query_delete_confirm_users = "DELETE FROM confirm_user WHERE registration_date < ( NOW() - INTERVAL 1 DAY );";
             $query_delete_confirm_users_result = mysqli_query($connection, $query_delete_confirm_users);
             if(!$query_delete_confirm_users_result){
-                exit("<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта(confirm).</p>");
+                exit("<p><strong> Сбой при удалении просроченного аккаунта(confirm).</strong></p>");
             }
 
             //Составляем зашифрованный и уникальный token
@@ -103,7 +109,7 @@ if (isset($_POST['submit'])) {
 
             if(!$query_insert_confirm){
                 // Сохраняем в сессию сообщение об ошибке. 
-                $error[] = "Ошибка запроса на добавления пользователя в БД (confirm)";
+               exit("<strong>Ошибка запроса на добавления пользователя в БД (confirm)</strong>");
 
             } else {
              
@@ -122,21 +128,23 @@ if (isset($_POST['submit'])) {
                  
                 //Отправляем сообщение с ссылкой для подтверждения регистрации на указанную почту и проверяем отправлена ли она успешно или нет. 
                 if(mail($email, $subject, $message, $headers)){
-                    $suc_reg = "<strong>Регистрация прошла успешно!!!</strong><p Теперь необходимо подтвердить введенный адрес электронной почты. Для этого, перейдите по ссылке указанную в сообщение, которую получили на почту ".$email." </p>";
+                    $suc_reg = "Регистрация прошла успешно. Теперь необходимо подтвердить введенный адрес электронной почты. Для этого, перейдите по ссылке указанную в сообщение, которую получили на почту $email";
              
                 }else{
-                    $error[] = "Ошибка при отправлении письма со сcылкой подтверждения, на почту ".$email;
+                    $error[] = "<strong>Ошибка при отправлении письма со сcылкой подтверждения, на почту ".$email."</strong>";
                 }
             }
         }
     } 
 }
+
+mysqli_close ($connection);
  
 ?>
 
 <?php 
 
-require('../templates/header.php');
+require_once('../templates/header.php');
 
 if (isset($suc_reg)) {
     echo $suc_reg;

@@ -3,7 +3,9 @@
 
 session_start();
 
-require('connection.php');
+$title="Вход";
+
+require_once('connection.php');
 
 if(isset($_POST['submit']))
 {
@@ -34,12 +36,9 @@ if(isset($_POST['submit']))
     {   
     	if($data['email_status'] != 1){
  
-            // Сохраняем в сессию сообщение об ошибке. 
-            $_SESSION["error_messages"] = "<p class='mesage_error' >Вы зарегистрированы, но, Ваш почтовый адрес не подтверждён. Для подтверждения почты перейдите по ссылке из письма, которую получили после регистрации.</p>
-                <p><strong>Внимание!</strong> Ссылка для подтверждения почты, действительна 24 часа с момента регистрации. Если Вы не подтвердите Ваш email в течении этого времени, то Ваш аккаунт будет удалён.</p>";
- 
-            //Останавливаем скрипт
+            // Сохраняем сообщение об ошибке. 
             $error = "<p><strong>Пожалуйста, подтвердите свою почту.</strong></p>";
+
  		} else { //Если почта подтверждена
  			
  			$email = $data['email'];
@@ -55,7 +54,7 @@ if(isset($_POST['submit']))
 			 	$update_password_cookie_token = mysqli_query($connection, $update_password_cookie_token_query);
 			    
 			    if(!$update_password_cookie_token){
-			        $error = 'Не удалось запомнить пользователя';
+			        $error = '<p><strong>Не удалось запомнить пользователя</strong></p>';
 				    }
 			 		
 			    //Устанавливаем куку с токеном
@@ -84,15 +83,16 @@ if(isset($_POST['submit']))
     }
     else
     {
-        $error = "Вы ввели неправильный логин/пароль";
+        $error = "<p><strong>Вы ввели неправильный логин/пароль</strong></p>";
     }
 }
+
 ?>
 
 <!-- Отображение ошибок -->
 
 <?php 
-require('../templates/header.php');
+require_once('../templates/header.php');
 if (isset($error)) {
 	echo $error;
 }
@@ -113,7 +113,7 @@ if (isset($error)) {
 			<button class="btn btn-success" name="submit" type="submit">Войти</button>
 		</form>
 		<br>
-		<p>Если вы еще не зарегистрированы, тогда нажмите <a href="register.php">здесь</a>.</p>
+		<p>Если вы еще не зарегистрированы, тогда нажмите <a href="register.php">сюда</a>.</p>
 		</div>
 	</div>
 </div>
