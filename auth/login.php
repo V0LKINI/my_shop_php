@@ -27,7 +27,7 @@ if(isset($_POST['submit']))
 
     # Вытаскиваем из БД запись, у которой логин равняеться введенному
     $login_or_email = $_POST['data'];
-    $query_log = "SELECT login, password, email, email_status FROM users WHERE login='$login_or_email' OR
+    $query_log = "SELECT name, login, password, email, email_status FROM users WHERE login='$login_or_email' OR
     	 email='$login_or_email'  LIMIT 1;";
     $query_log_result = mysqli_query($connection, $query_log);
     $data = mysqli_fetch_assoc($query_log_result);
@@ -75,6 +75,8 @@ if(isset($_POST['submit']))
 
 	        #Запоминаем логин в сессии
 	    	$_SESSION['login'] = $data['login'];
+	    	$_SESSION['email'] = $data['email'];
+	    	$_SESSION['name'] = $data['name'];
 
 	    	// #Автоматический переход на главную страницу
 	    	header('Location: http://brandshop/');

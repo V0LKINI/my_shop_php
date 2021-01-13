@@ -5,7 +5,7 @@ $connection = mysqli_connect('localhost', 'root', 'root', "brandshop")
  
 if(isset($_COOKIE["password_cookie_token"]) && !empty($_COOKIE["password_cookie_token"])){
     $cookie = $_COOKIE["password_cookie_token"];
-    $select_user_data_request = "SELECT login, email, password FROM users WHERE password_cookie_token = '$cookie';";
+    $select_user_data_request = "SELECT name, login, email, password FROM users WHERE password_cookie_token = '$cookie';";
     $select_user_data = mysqli_query($connection, $select_user_data_request);
  
     if(!$select_user_data){
@@ -15,6 +15,7 @@ if(isset($_COOKIE["password_cookie_token"]) && !empty($_COOKIE["password_cookie_
         $array_user_data = mysqli_fetch_assoc($select_user_data);
  
         if($array_user_data){
+            $_SESSION['name'] = $array_user_data["name"];
             $_SESSION['login'] = $array_user_data["login"];
             $_SESSION['email'] = $array_user_data["email"];
             $_SESSION['password'] = $array_user_data["password"];
@@ -43,31 +44,28 @@ if(isset($_COOKIE["password_cookie_token"]) && !empty($_COOKIE["password_cookie_
 <header>
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #4D4D4D;">
   <div style="width: 1100px;" class="container-fluid">
-    <img src="../images/origami-logo.svg" alt="" width="30" height="25" class="d-inline-block align-top">
-    <a class="navbar-brand" href="/" style="font-family: Huntsman;">Brand</a>
+    <a href="/"><img src="../images/origami-logo.svg" alt="" width="40" height="40" class="d-inline-block align-top"></a>
+    <a class="navbar-brand" href="/" style="font-family: Huntsman; font-size: 20px;">Brand</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
    <div class="collapse navbar-collapse" id="navbarText">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="/">Главная</a>
-      </li>
+    <ul class="navbar-nav ">
       <li class="nav-item">
-        <a class="nav-link" href="http://brandshop/index.php?page=shop">Магазин</a>
+        <a class="nav-link active" href="http://brandshop/shop.php" >Магазин</a>
       </li>
       <?php 
         if (isset($_SESSION['login'])) {
       
-          echo '<li class="nav-item"><a class="nav-link" href="http://brandshop/auth/logout.php">Выйти</a></li>';
+          echo '<li class="nav-item "><a class="nav-link active" href="http://brandshop/auth/logout.php">Выйти</a></li>';
         } else {
-          echo '<li class="nav-item"><a class="nav-link" href="http://brandshop/auth/login.php">Вход</a></li>';
-          echo '<li class="nav-item"><a class="nav-link" href="http://brandshop/auth/register.php">Регистрация</a></li>';
+          echo '<li class="nav-item"><a class="nav-link active" href="http://brandshop/auth/login.php">Вход</a></li>';
+          echo '<li class="nav-item"><a class="nav-link active" href="http://brandshop/auth/register.php">Регистрация</a></li>';
       }
       ?>
     </ul>
-    <span class="navbar-text ">
+    <span class="navbar-text " style="margin-left:600px; color: white;">
       <?php 
          if (isset($_SESSION['login'])){ echo  'Добро пожаловать, ' . $_SESSION['login'];}
       ?>

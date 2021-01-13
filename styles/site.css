@@ -20,33 +20,6 @@ body, html {
     font-family: "Open Sans", sans-serif;
 }
 
-#navWrap {
-    height: 50px;
-    float: right;
-    display: flex;
-    align-items: center;
-	flex-direction: row;
-}
-
-#navWrap a {
-    display: block;
-    font-family: "Open Sans", sans-serif;
-    color: #fff;
-    text-decoration: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0 20px;
-    height: 70px;
-    line-height: 70px;
-}
-
-#navWrap a:hover {
-    background: #5e5e5e;
-}
-
-#navWrap a:last-child {
-    border-left: none;
-}
 
 #content {
     min-height: 600px;
@@ -275,5 +248,13 @@ footer {
     font-weight: bold;
 }
 
+#comments {
+    width: 1100px;
+    margin-top: 230px;
+}
+
+#comment {
+    margin-bottom: 20px;
+}
 /* ---------------- КОНЕЦ стилей для страницы с открытым товаром -------------------------- */
 
