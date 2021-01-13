@@ -20,7 +20,7 @@
 
         <div id="footerNav">
             <a href="/">Главная</a>
-            <a href="index.php?page=shop">Магазин</a>
+            <a href="shop.php">Магазин</a>
         </div>
 
         <div id="social">

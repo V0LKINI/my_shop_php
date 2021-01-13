@@ -5,37 +5,58 @@ require_once('comments/show_comments.php');
 ?>
  
 <?php require_once('templates/header.php'); ?>
+<div id="good">
+     <div id="openedProduct-img">
+        <img src=" <?php echo $good['img']; ?>">
+    </div>
+    <div id="openedProduct-content">
+        <h1 id="openedProduct-name">
+            <?php echo $good['name']; ?>
+        </h1>
+        <div id="openedProduct-desc">
+            <?php echo $good['description']; ?>
+        </div>
+        <div id="openedProduct-price">
+            <?php echo $good['price'] . '$'; ?>
+        </div>
+    </div>
+</div>
 
- <div id="openedProduct-img">
-    <img src=" <?php echo $good['img']; ?>">
-</div>
-<div id="openedProduct-content">
-    <h1 id="openedProduct-name">
-        <?php echo $good['name']; ?>
-    </h1>
-    <div id="openedProduct-desc">
-        <?php echo $good['description']; ?>
-    </div>
-    <div id="openedProduct-price">
-        <?php echo $good['price'] . '$'; ?>
-    </div>
-</div>
+<a href="shop.php?id=<?php echo $good['id']; ?>" class="shopButton">Комментарии</a>
+<a href="shop.php?id=<?php echo $good['id']; ?>&page=specifications" class="shopButton">Характеристики</a>
+
+
+<?php 
+
+if (isset($_GET['page'])) {
+    echo "<h1>Здесь будут характеристики товаров</h1>";
+}else{
+
+ ?>
 
 <div id="comments">
   <h2>Комментарии:</h2>
 
-<?php 
-if (empty($comments)) {
-    echo "Здесь ещё нет ни одного комментария. Будьте первым!";
-}else {
-
-?>
+  <?php 
+  if (empty($comments)) {
+      echo "Здесь ещё нет ни одного комментария. Будьте первым!";
+  }else {
+  
+  ?>
 
   <div >
     <?php foreach ($comments as $comment): ?>
     <div id=comment>
         <div >
-           <?php echo '<strong>'.$comment['name'].'</strong>:'; ?>
+           <?php 
+            echo '<strong>'.$comment['name'].'</strong>:';
+            //Если комментарий того пользователя, кто в данный момент авторизирован, то этот пользователь может удалить его
+            if ($comment['email']==$_SESSION['email']) {?>
+                <a href="comments/delete_comment.php?id=<?php echo $comment['id']; ?>"><span id="deleteIcon" class="material-icons md-18 text-danger">clear</span></a> 
+                
+            <?php } ?>
+
+           
         </div>
         <div >
             <?php echo $comment['text']; ?>
@@ -75,4 +96,4 @@ if (!isset($_SESSION['login'])) {
 </div>
 
 
-<?php } require_once('templates/footer.php'); ?>
+<?php } } require_once('templates/footer.php'); ?>

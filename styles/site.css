@@ -215,6 +215,29 @@ footer {
 
 /* ---------------- НАЧАЛО стилей для страницы с открытым товаром ----------------------- */
 
+.shopButton {
+    border: none;
+    padding: 5px 15px;
+    background-color: #696969;
+    color: #e6e09a;
+    text-decoration: none;
+    display:inline-block;
+    width: 200px;
+    text-align: center;
+    line-height:26px;
+}
+
+.shopButton:hover {
+    color: #fff;
+    background-color: #777777;
+}
+
+#good {
+    width: 1100px;
+    height: 250px;
+    margin-bottom: 10px;
+}
+
 #openedProduct-img {
     float: left;
     width: 30%;
@@ -250,7 +273,7 @@ footer {
 
 #comments {
     width: 1100px;
-    margin-top: 230px;
+    margin-top: 20px;
 }
 
 #comment {
@@ -258,3 +281,7 @@ footer {
 }
 /* ---------------- КОНЕЦ стилей для страницы с открытым товаром -------------------------- */
 
+#deleteIcon {
+      position:absolute; 
+      bottom:1;
+}
