@@ -20,6 +20,10 @@ body, html {
     font-family: "Open Sans", sans-serif;
 }
 
+header {
+    position: sticky;
+    top: 0;
+}
 
 #content {
     min-height: 600px;
@@ -271,6 +275,9 @@ footer {
     font-weight: bold;
 }
 
+/* ---------------- КОНЕЦ стилей для страницы с открытым товаром -------------------------- */
+
+/* ---------------- НАЧАЛО стилей для комментариев страницы с открытым товаром ----------------------- */
 #comments {
     width: 1100px;
     margin-top: 20px;
@@ -279,9 +286,43 @@ footer {
 #comment {
     margin-bottom: 20px;
 }
-/* ---------------- КОНЕЦ стилей для страницы с открытым товаром -------------------------- */
+
 
 #deleteIcon {
+      opacity: 0.0;
       position:absolute; 
       bottom:1;
 }
+
+#comment:hover #deleteIcon{
+    opacity: 1.0;
+}
+
+#pagination {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+
+#pagination li {display: inline;}
+
+#pagination li a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    border: 1px solid #ddd; /* Gray */
+    margin: 0 4px; /* 0 is for top and bottom. Feel free to change it */
+    
+}
+
+#pagination li a.active {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+}
+
+#pagination li a:hover:not(.active) {background-color: #ddd;}
+
+/* ---------------- КОНЕЦ стилей для комментариев страницы с открытым товаром ----------------------- */

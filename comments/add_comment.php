@@ -16,7 +16,7 @@
   $query = "INSERT INTO comments (id_good, name, email, text, date_add) VALUES ('$good_id', '$name', '$email', '$text_comment', NOW());";
   mysqli_query($connection, $query );// Добавляем комментарий в таблицу
 
-  // Делаем реридект обратно
+  // Делаем редидект обратно
   header("Location: ".$_SERVER["HTTP_REFERER"]);
 ?>
  

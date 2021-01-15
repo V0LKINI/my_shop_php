@@ -50,7 +50,7 @@ else{//всё что ниже выполняется если не переда�
         <div class="shopUnitPrice">
            <?php echo $good['price'] . '$'; ?>
         </div>
-        <a href="shop.php?id=<?php echo $good['id']; ?>" class="shopUnitMore">
+        <a href="shop.php?id=<?php echo $good['id']; ?>&page=1" class="shopUnitMore">
             Подробнее
         </a>
     </div>

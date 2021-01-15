@@ -4,7 +4,7 @@
 
   $id = $_GET['id'];
   $query = "DELETE FROM comments WHERE id='$id';";
-  mysqli_query($connection, $query );// Добавляем комментарий в таблицу
+  mysqli_query($connection, $query );// Удаляем комментарий из таблицы
 
   // Делаем реридект обратно
   header("Location: ".$_SERVER["HTTP_REFERER"]);
