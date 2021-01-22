@@ -294,7 +294,29 @@ footer {
       bottom:1;
 }
 
+#deleteIcon:hover{
+    background-color: #ddd;
+}
+
+#editIcon {
+      opacity: 0.0;
+      position:absolute; 
+      bottom:1;
+      margin-left: 24px;
+      font-size: 20px; 
+      padding: 2px;
+}
+
+#editIcon:hover{
+    cursor: pointer;
+    background-color: #ddd;
+}
+
 #comment:hover #deleteIcon{
+    opacity: 1.0;
+}
+
+#comment:hover #editIcon{
     opacity: 1.0;
 }
 

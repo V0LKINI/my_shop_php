@@ -50,7 +50,9 @@ if (isset($_GET['page']) and $_GET['page']=='specifications') {
             echo '<strong>'.$comment['name'].'</strong>:';
             //Если комментарий того пользователя, кто в данный момент авторизирован, то этот пользователь может удалить его
             if ($comment['email']==$_SESSION['email']) {?>
-                <a href="comments/delete_comment.php?id=<?php echo $comment['id']; ?>"><span id="deleteIcon" class="material-icons md-18 text-danger">clear</span></a> 
+                <a href="comments/delete_comment.php?id=<?php echo $comment['id']; ?>"><span id="deleteIcon" class="material-icons md-24 text-danger">clear</span></a> 
+                <a onclick='edit_comment("<?php echo $comment['text']; ?>", <?php echo $comment['id']; ?>)'>
+                    <span id="editIcon" class="material-icons md-18">edit</span></a> 
                 
             <?php } ?>     
         </div>
@@ -70,7 +72,7 @@ if (isset($_GET['page']) and $_GET['page']=='specifications') {
         <?php
         if ($page != 1) {
             echo "<li><a href=shop.php?id=".$good_id."&page=1>&lt&lt </a></li>";
-            echo "<li><a href=shop.php?id=".$good_id."&page=1>&lt </a></li>";
+            echo "<li><a href=shop.php?id=".$good_id."&page=".($page-1).">&lt </a></li>";
         }
         for ($i = $start; $i <= $end; $i++){
             if ($_GET['page'] == $i) {
@@ -104,17 +106,34 @@ if (!isset($_SESSION['login'])) {
         <div class="col" style="padding: 0;">
         <!-- Форма авторизации -->
         <h2>Добавить комментарий</h2>
-        <form action="comments/add_comment.php" method="post">
-            <textarea cols="70" rows="2" name="text_comment" required="required"></textarea>
+        <form action="comments/add_comment.php" method="post" id="Add_edit_comment_form">
+            <textarea id="addCommentArea" cols="70" rows="2" name="text_comment" required="required"></textarea>
             <br>
             <input type="hidden" name="name" value="<?=$_SESSION['name']?>">
             <input type="hidden" name="good_id" value="<?=$good['id']?>">
+            <input id="edit_comment_id" type="hidden" name="comment_id" value="">
             <input class=" btn btn-success" type="submit" name="add_comment" value="Отправить" />
         </form>
         <br>
         </div>
     </div>
 </div>
+
+<script>
+    function edit_comment(text, comment_id) {
+        var area = document.getElementById("addCommentArea");
+        area.innerHTML = text;
+        area_length = (area.innerHTML.length);
+        area.focus();
+        area.setSelectionRange(area_length, area_length);
+
+        //Изменяем файл скрипта с добавления на изменение комментария
+        document.getElementById('Add_edit_comment_form').action = 'comments/edit_comment.php';
+
+        //Меняет значение скрытого input comment_id чтоб передать id комментария скрипту edit_comment
+        document.getElementById('edit_comment_id').value = comment_id;
+    };
+</script>
 
 <!-- Закрываем два блока else:Первый определяет авторизирован ли пользователь, второй проверяет страницу page. Подключаем футер в самом конце страницы-->
 <?php } } require_once('templates/footer.php'); ?>

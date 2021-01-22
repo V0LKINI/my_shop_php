@@ -38,7 +38,10 @@ if(($row = mysqli_fetch_assoc($query_select_user)) != false){
                     //================ Проверка паролей ==================
                     var password = $('input[name=password]');
                     var confirm_password = $('input[name=confirm_password]');
-                     
+
+                    // Дезактивируем кнопку отправки
+                    $('input[type=submit]').attr('disabled', true);
+
                     password.blur(function(){
                         if(password.val() != ''){
                             //Если длина введённого пароля меньше шести символов, то выводим сообщение об ошибке
@@ -102,8 +105,8 @@ if(($row = mysqli_fetch_assoc($query_select_user)) != false){
 					<!-- Форма авторизации -->
 					<h2>Установка нового пароля</h2>
 					<form action="update_password.php" method="post">
-						<input class="form-control" type="password" class="form-control" name="password" placeholder="Введите новый пароль" required="required"><br>
-						<input class="form-control" type="password" class="form-control" name="confirm_password" placeholder="Повторите новый пароль" required="required"><br>
+						<input class="form-control" type="password" name="password" placeholder="Введите новый пароль" required="required"><br>
+						<input class="form-control" type="password" name="confirm_password" placeholder="Повторите новый пароль" required="required"><br>
 						<input type="hidden" name="token" value="<?=$token?>">
                         <input type="hidden" name="email" value="<?=$email?>">
 						<input class=" btn btn-success" type="submit" name="set_new_password" value="Изменить пароль" />
