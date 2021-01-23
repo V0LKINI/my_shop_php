@@ -20,16 +20,12 @@ body, html {
     font-family: "Open Sans", sans-serif;
 }
 
-header {
-    position: sticky;
-    top: 0;
-}
-
 #content {
     min-height: 600px;
     width: 1100px;
     margin: 0 auto;
     padding: 20px 0;
+
 }
 
 footer {
@@ -112,6 +108,21 @@ footer {
     color: #fff;
 }
 
+@media only screen and (max-width : 1100px) {
+    #content {
+        width: 100%;
+    }
+    #footerInside {
+        width: 100%;
+    }   
+    #footerNav{
+        padding-right: 10px;
+    }
+    #contacts{
+        padding-left: 10px;
+    }
+}
+
 /* -------------------- НАЧАЛО стилей для главной страницы --------------------- */
 
 #promo {
@@ -148,6 +159,11 @@ footer {
 @media all and (min-width: 1500px) {
     #promo {
         height: 800px;
+    }
+}
+@media only screen and (max-width : 1100px) {
+    #mainText {
+        width: 100%;
     }
 }
 
@@ -275,6 +291,13 @@ footer {
     font-weight: bold;
 }
 
+@media only screen and (max-width : 991px) {
+    #good {
+        width: 100%;
+    }
+}
+
+
 /* ---------------- КОНЕЦ стилей для страницы с открытым товаром -------------------------- */
 
 /* ---------------- НАЧАЛО стилей для комментариев страницы с открытым товаром ----------------------- */
@@ -320,6 +343,10 @@ footer {
     opacity: 1.0;
 }
 
+#comment_name{
+   font-family: Exo, sans-serif;
+}
+
 #pagination {
     display: inline-block;
     padding: 0;
@@ -347,4 +374,17 @@ footer {
 
 #pagination li a:hover:not(.active) {background-color: #ddd;}
 
+@media only screen and (max-width : 1100px) {
+    #comments {
+        width: 100%;
+    }
+}
+
 /* ---------------- КОНЕЦ стилей для комментариев страницы с открытым товаром ----------------------- */
+
+@media only screen and (max-width : 1100px) {
+    #content {
+        width: 100%;
+        padding-left: 10px;
+    }
+}

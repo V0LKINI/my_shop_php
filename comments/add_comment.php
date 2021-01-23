@@ -17,6 +17,6 @@
   mysqli_query($connection, $query );// Добавляем комментарий в таблицу
 
   // Делаем редидект обратно
-  header("Location: ".$_SERVER["HTTP_REFERER"]);
+  header("Location: http://brandshop/shop.php?id=".$good_id."&page=".$_POST['count_page']);
 ?>
  

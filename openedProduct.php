@@ -30,7 +30,7 @@
 
 if (isset($_GET['page']) and $_GET['page']=='specifications') {
     echo "<h1>Здесь будут характеристики товаров</h1>";
-}else{ 
+} else { 
 ?>
 
 <div id="comments">
@@ -46,9 +46,10 @@ if (isset($_GET['page']) and $_GET['page']=='specifications') {
     <?php foreach ($comments as $comment): ?>
     <div id=comment>
         <div >
-           <?php 
-            echo '<strong>'.$comment['name'].'</strong>:';
-            //Если комментарий того пользователя, кто в данный момент авторизирован, то этот пользователь может удалить его
+           
+           <span id="comment_name"><?php  echo '<strong>'.$comment['name'].'</strong>:';?> </span>
+           <!--  Если комментарий того пользователя, кто в данный момент авторизирован, то этот пользователь может удалить его -->
+            <?php
             if ($comment['email']==$_SESSION['email']) {?>
                 <a href="comments/delete_comment.php?id=<?php echo $comment['id']; ?>"><span id="deleteIcon" class="material-icons md-24 text-danger">clear</span></a> 
                 <a onclick='edit_comment("<?php echo $comment['text']; ?>", <?php echo $comment['id']; ?>)'>
@@ -56,11 +57,19 @@ if (isset($_GET['page']) and $_GET['page']=='specifications') {
                 
             <?php } ?>     
         </div>
-        <div >
+        <div id="comment_text">
             <?php echo $comment['text']; ?>
         </div>
-        <div>
-           <?php echo $comment['date_add']; ?>
+        <div id="date_add">
+           <?php 
+           list($year, $month, $day, $hours, $minutes, $seconds) = preg_split('/[^\w]+/', $comment['date_add']);
+           if (date('d') == $day and date('m') == $month and date('Y') == $year) {
+               echo "сегодня в ".$hours.":".$minutes;
+           } else if (date('d') == ($day+1) and date('m') == $month and date('Y') == $year) {
+               echo "вчера в ".$hours.":".$minutes;
+           }else echo $day."-" .$month."-".$year." ".$hours.":".$minutes;
+
+           ?>
         </div>  
     </div>
     <?php endforeach; ?>
@@ -75,7 +84,7 @@ if (isset($_GET['page']) and $_GET['page']=='specifications') {
             echo "<li><a href=shop.php?id=".$good_id."&page=".($page-1).">&lt </a></li>";
         }
         for ($i = $start; $i <= $end; $i++){
-            if ($_GET['page'] == $i) {
+            if ($page == $i) {
                 echo "<li><a class='active' href=shop.php?id=".$good_id."&page=".$i.">".$i." </a></li>";
             }else{
                 echo "<li><a href=shop.php?id=".$good_id."&page=".$i.">".$i." </a></li>";
@@ -111,6 +120,7 @@ if (!isset($_SESSION['login'])) {
             <br>
             <input type="hidden" name="name" value="<?=$_SESSION['name']?>">
             <input type="hidden" name="good_id" value="<?=$good['id']?>">
+            <input type="hidden" name="count_page" value="<?=$count_page?>">
             <input id="edit_comment_id" type="hidden" name="comment_id" value="">
             <input class=" btn btn-success" type="submit" name="add_comment" value="Отправить" />
         </form>

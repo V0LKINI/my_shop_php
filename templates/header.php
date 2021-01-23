@@ -44,42 +44,40 @@ if(isset($_COOKIE["password_cookie_token"]) && !empty($_COOKIE["password_cookie_
 <body>
   
 <header>
+
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #4D4D4D;">
   <div style="width: 1100px;" class="container-fluid">
     <a href="/"><img src="../images/origami-logo.svg" alt="" width="40" height="40" class="d-inline-block align-top"></a>
     <a class="navbar-brand" href="/" style="font-family: Huntsman; font-size: 20px;">Brand</a>
-    
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+  
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
-   <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-      <li class="nav-item">
-        <a class="nav-link active" href="http://brandshop/shop.php" >Магазин</a>
-      </li>
-      <?php 
-        if (isset($_SESSION['login'])) {
-      
-          echo '<li class="nav-item "><a class="nav-link active" href="http://brandshop/auth/logout.php">Выйти</a></li>';
-        } else {
-          echo '<li class="nav-item"><a class="nav-link active" href="http://brandshop/auth/login.php">Вход</a></li>';
-          echo '<li class="nav-item"><a class="nav-link active" href="http://brandshop/auth/register.php">Регистрация</a></li>';
-      }
-      ?>
-    </ul>
-    <span class="navbar-text " style="margin-left:600px; color: white;">
-      <?php 
-         if (isset($_SESSION['login'])){ echo  'Добро пожаловать, ' . $_SESSION['login'];}
-      ?>
-    </span>
-  </div>
-
-
-    
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" href="http://brandshop/shop.php" >Магазин</a>
+        </li>
+        <?php 
+          if (isset($_SESSION['login'])) {
         
+            echo '<li class="nav-item "><a class="nav-link active" href="http://brandshop/auth/logout.php">Выйти</a></li>';
+          } else {
+            echo '<li class="nav-item"><a class="nav-link active" href="http://brandshop/auth/login.php">Вход</a></li>';
+            echo '<li class="nav-item"><a class="nav-link active" href="http://brandshop/auth/register.php">Регистрация</a></li>';
+        }
+        ?>
+      </ul>
+      <span class="navbar-text" style="color: white;">
+        <?php 
+       if (isset($_SESSION['login'])){ echo  'Добро пожаловать, ' . $_SESSION['login'];}
+    ?>
+      </span>
+    </div>
   </div>
 </nav>
+
+
 </header>
 
 <div id="content">
