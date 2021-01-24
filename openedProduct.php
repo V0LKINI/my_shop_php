@@ -7,7 +7,7 @@
 <!-- Вывод информации о товаре -->
 <div id="good">
      <div id="openedProduct-img">
-        <img src=" <?php echo $good['img']; ?>">
+        <a href="http://brandshop<?php echo $good['img']; ?>"><img src=" <?php echo $good['img']; ?>"></a>
     </div>
     <div id="openedProduct-content">
         <h1 id="openedProduct-name">
