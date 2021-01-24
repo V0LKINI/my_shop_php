@@ -73,6 +73,11 @@ if(isset($_COOKIE["password_cookie_token"]) && !empty($_COOKIE["password_cookie_
        if (isset($_SESSION['login'])){ echo  'Добро пожаловать, ' . $_SESSION['login'];}
     ?>
       </span>
+      <form class="d-flex" method="post" action="search.php" style=" margin-left: 15px;">
+        <input class="form-control me-2 " name="search_q" type="search" placeholder="Поиск" aria-label="Search">
+        <button class="btn btn-secondary" type="submit">Найти</button>
+      </form>
+      
     </div>
   </div>
 </nav>

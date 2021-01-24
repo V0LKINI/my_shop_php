@@ -4,15 +4,15 @@ session_start();
 require_once('auth/connection.php');
 
 $query = 'SELECT * FROM goods;';
-
 $query_result = mysqli_query($connection, $query) 
-    or die("Ошибка " . mysqli_error($connection)); ;
-
+    or die("Ошибка " . mysqli_error($connection));
 if ($query_result) {
     while ($data_array = mysqli_fetch_assoc($query_result)) {
         $goods[] = $data_array;   
     }
 }
+
+
 
 //Если пользователь нажал "Подробнее" под товаром, то он переходит на эту же страницу, но в url передаётся id и, если товар с данным id есть в магазине, то подключается шаблон openedProduct.php с соотвествующим id товара, иначе попадаем в блок else, то есть выводится список всех товаров в магазине.
 $good_found = false;
@@ -38,9 +38,7 @@ if ($good_found) {
 
 <?php require_once('templates/header.php'); ?>
 
-<h1>
-    Каталог товаров
-</h1>
+<h1>Каталог товаров</h1>
 <div>
     <?php foreach ($goods as $good): ?>
     <div class="shopUnit">
