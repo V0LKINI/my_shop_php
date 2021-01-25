@@ -70,7 +70,7 @@ if(isset($_COOKIE["password_cookie_token"]) && !empty($_COOKIE["password_cookie_
       </ul>
       <span class="navbar-text" style="color: white;">
         <?php 
-       if (isset($_SESSION['login'])){ echo  'Добро пожаловать, ' . $_SESSION['login'];}
+       if (isset($_SESSION['login'])){ echo  'Добро пожаловать, ' . $_SESSION['name'];}
     ?>
       </span>
       <form class="d-flex" method="post" action="search.php" style=" margin-left: 15px;">

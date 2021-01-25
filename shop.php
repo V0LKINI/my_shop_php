@@ -13,7 +13,6 @@ if ($query_result) {
 }
 
 
-
 //Если пользователь нажал "Подробнее" под товаром, то он переходит на эту же страницу, но в url передаётся id и, если товар с данным id есть в магазине, то подключается шаблон openedProduct.php с соотвествующим id товара, иначе попадаем в блок else, то есть выводится список всех товаров в магазине.
 $good_found = false;
 $id = $_GET['id'];
@@ -41,6 +40,18 @@ if ($good_found) {
 <h1>Каталог товаров</h1>
 <div>
     <?php foreach ($goods as $good): ?>
+        
+        <?php 
+        //Для отображения просмотров товара
+        $counter = 0;
+        $page_id = md5($good['id']);
+        $path_to_file = "views/$page_id.dat";
+        if (file_exists($path_to_file)) {
+             $counter = @file_get_contents($path_to_file); 
+        }
+        
+    ?>    
+
     <div class="shopUnit">
         <img src="<?php echo $good['img']; ?>" />
 
@@ -50,8 +61,11 @@ if ($good_found) {
         <div class="shopUnitShortDesc">
             <?php echo substr($good['description'],0,60)."..."; ?>
         </div>
-        <div class="shopUnitPrice">
-           <?php echo $good['price'] . '$'; ?>
+        <div class="shopUnitPriceViews">
+          <span id="shopUnitViews"> 
+            <?php echo $counter; ?><span id="viewsIcon" class="material-icons">visibility</span>
+          </span>
+          <span id="shopUnitPrice"><?php echo $good['price'] . '$'; ?></span>
         </div>
         <a href="shop.php?id=<?php echo $good['id']; ?>&page=1" class="shopUnitMore">
             Подробнее

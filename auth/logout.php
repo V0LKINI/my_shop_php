@@ -16,9 +16,8 @@ if(isset($_COOKIE["password_cookie_token"])){
     }
 }
 
-unset($_SESSION["email"]);
-unset($_SESSION["login"]);
-unset($_SESSION["password"]);
+//уничтожаем сессию
+session_destroy();
 
 // Возвращаем пользователя на ту страницу, на которой он нажал на кнопку выход.
 header("HTTP/1.1 301 Moved Permanently");

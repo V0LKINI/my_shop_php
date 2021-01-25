@@ -72,7 +72,6 @@ if(isset($_POST['submit']))
 	     
 			}
 	        
-
 	        #Запоминаем логин в сессии
 	    	$_SESSION['login'] = $data['login'];
 	    	$_SESSION['email'] = $data['email'];

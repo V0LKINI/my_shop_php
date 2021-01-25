@@ -1,7 +1,7 @@
 <?php 
 require_once('auth/connection.php');
 
-if (isset($_POST['search_q'])){
+if (isset($_POST['search_q']) and $_POST['search_q'] !='' ){
 	$search_q=$_POST['search_q'];
 	$search_q = trim($search_q);
 	$search_q = strip_tags($search_q);
@@ -15,6 +15,8 @@ if (isset($_POST['search_q'])){
 	            $goods[] = $data_array;   
 	        }
 	} 
+} else {
+	header("Location: http://brandshop/shop.php");
 }
 ?>
 
@@ -25,6 +27,17 @@ if (isset($_POST['search_q'])){
 
 <div>
     <?php foreach ($goods as $good): ?>
+        
+        <?php 
+        //Для отображения просмотров товара
+        $counter = 0;
+        $page_id = md5($good['id']);
+        $path_to_file = "views/$page_id.dat";
+        if (file_exists($path_to_file)) {
+             $counter = @file_get_contents($path_to_file); 
+        }
+    ?>    
+
     <div class="shopUnit">
         <img src="<?php echo $good['img']; ?>" />
 
@@ -34,8 +47,11 @@ if (isset($_POST['search_q'])){
         <div class="shopUnitShortDesc">
             <?php echo substr($good['description'],0,60)."..."; ?>
         </div>
-        <div class="shopUnitPrice">
-           <?php echo $good['price'] . '$'; ?>
+        <div class="shopUnitPriceViews">
+          <span id="shopUnitViews"> <?php echo $counter; ?>
+                <span id="viewsIcon" class="material-icons">visibility</span>
+          </span>
+          <span id="shopUnitPrice"><?php echo $good['price'] . '$'; ?></span>
         </div>
         <a href="shop.php?id=<?php echo $good['id']; ?>&page=1" class="shopUnitMore">
             Подробнее

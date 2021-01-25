@@ -216,13 +216,8 @@ footer {
     margin-top: 10px;
 }
 
-.shopUnitPrice {
-    text-align: right;
-    padding-right: 20px;
-    margin-top: 10px;
-    color: #6a6747;
-    font-weight: bold;
-}
+
+
 
 .shopUnitMore {
     border: none;
@@ -233,6 +228,33 @@ footer {
     text-align: center;
     color: #e6e09a;
     text-decoration: none;
+}
+
+.shopUnitPriceViews{
+    position: relative;
+    padding-right: 20px;
+    margin-top: 10px;
+    height: 15px;
+    color: #6a6747;
+    font-weight: bold;
+    width: 100%;
+}
+
+#shopUnitPrice{
+    display: inline-block;
+    position: absolute;
+    right: 3%;
+}
+#shopUnitViews{
+    display: inline-block;
+    position: absolute;
+    left: 3%;
+}
+
+#viewsIcon {
+    margin-left: 5px;
+      position:absolute; 
+      bottom:1;
 }
 
 .shopUnitMore:hover {
@@ -282,8 +304,10 @@ footer {
 }
 
 #openedProduct-content {
+    position: relative;
     float: left;
     width: 67%;
+    height: 250px;
 }
 
 #openedProduct-name {
@@ -340,6 +364,8 @@ footer {
       font-size: 20px; 
       padding: 2px;
 }
+
+
 
 #editIcon:hover{
     cursor: pointer;

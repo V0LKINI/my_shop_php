@@ -2,6 +2,24 @@
 <!-- Подключаем файл show_comments, который определяет, какие комментарии и сколько страниц с комментариями будут выведено ниже в блоке comments-->
 <?php require_once('comments/show_comments.php');?>
 
+<?php 
+
+$page_id = md5($good['id']);
+$path_to_file = "views/$page_id.dat";
+$counter = @file_get_contents($path_to_file);
+
+if ($_SESSION['login']) {
+  $write = @file_put_contents($path_to_file, $counter);
+  if(!$_SESSION[$path_to_file])
+  {
+    @file_put_contents($path_to_file , ($counter + 1));
+    $_SESSION[$path_to_file] =1;
+  }
+}
+?>
+
+
+
 <?php require_once('templates/header.php'); ?>
 
 <!-- Вывод информации о товаре -->
