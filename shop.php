@@ -3,7 +3,7 @@ session_start();
 
 require_once('auth/connection.php');
 
-$query = 'SELECT * FROM goods;';
+$query = 'SELECT * FROM goods ORDER BY comments_count DESC;';
 $query_result = mysqli_query($connection, $query) 
     or die("Ошибка " . mysqli_error($connection));
 if ($query_result) {
@@ -42,12 +42,20 @@ if ($good_found) {
     <?php foreach ($goods as $good): ?>
         
         <?php 
-        //Для отображения просмотров товара
-        $counter = 0;
+        //Для отображения количества просмотров товара
+        $views_count = 0;
         $page_id = md5($good['id']);
-        $path_to_file = "views/$page_id.dat";
+        $path_to_file = "views_count/$page_id.dat";
         if (file_exists($path_to_file)) {
-             $counter = @file_get_contents($path_to_file); 
+             $views_count = @file_get_contents($path_to_file); 
+        }
+
+         //Для отображения количества комментариев товара
+        $comments_count = 0;
+        $page_id = md5($good['id']);
+        $path_to_file = "comments/comments_count/$page_id.dat";
+        if (file_exists($path_to_file)) {
+             $comments_count = @file_get_contents($path_to_file); 
         }
         
     ?>    
@@ -61,9 +69,12 @@ if ($good_found) {
         <div class="shopUnitShortDesc">
             <?php echo substr($good['description'],0,60)."..."; ?>
         </div>
-        <div class="shopUnitPriceViews">
+        <div class="shopUnitPriceViewsComments">
           <span id="shopUnitViews"> 
-            <?php echo $counter; ?><span id="viewsIcon" class="material-icons">visibility</span>
+            <?php echo $views_count; ?><span id="viewsIcon" class="material-icons">visibility</span>
+          </span>
+          <span id="shopUnitComments"> 
+            <?php echo $comments_count; ?><span id="commentIcon" class="material-icons">comment</span>
           </span>
           <span id="shopUnitPrice"><?php echo $good['price'] . '$'; ?></span>
         </div>

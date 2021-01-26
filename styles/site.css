@@ -230,7 +230,7 @@ footer {
     text-decoration: none;
 }
 
-.shopUnitPriceViews{
+.shopUnitPriceViewsComments{
     position: relative;
     padding-right: 20px;
     margin-top: 10px;
@@ -251,10 +251,24 @@ footer {
     left: 3%;
 }
 
+#shopUnitComments{
+    display: inline-block;
+    position: absolute;
+    left: 17%;
+}
+
 #viewsIcon {
-    margin-left: 5px;
+    margin-left: 3px;
       position:absolute; 
       bottom:1;
+}
+
+#commentIcon {
+    margin-left: 3px;
+    position:absolute; 
+    bottom:1;
+    font-size: 22px;
+    padding-top: 2px;
 }
 
 .shopUnitMore:hover {

@@ -8,7 +8,11 @@ $res = mysqli_query($connection, "SELECT COUNT(*) FROM comments WHERE id_good='$
 $row = mysqli_fetch_row($res);
 
 $total = $row[0]; // всего записей 
-$count_page = ceil($total / $kol);// всего страниц 
+$count_page = 1;
+if ($count_page < ceil($total / $kol)) {
+	$count_page = ceil($total / $kol); // всего страниц 
+}
+
 
 // текущая страница
 if (isset($_GET['page']) and $_GET['page']!='specifications' and $_GET['page']<=$count_page){

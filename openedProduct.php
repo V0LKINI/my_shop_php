@@ -3,18 +3,19 @@
 <?php require_once('comments/show_comments.php');?>
 
 <?php 
+$good_id = $good['id'];
+$page_id = md5($good_id);
+$path_to_file = "views_count/$page_id.dat";
+$views_counter = @file_get_contents($path_to_file);
 
-$page_id = md5($good['id']);
-$path_to_file = "views/$page_id.dat";
-$counter = @file_get_contents($path_to_file);
+if ($_SESSION['login'] and !$_SESSION[$path_to_file]) {
+  // Увеличиваем счётчик просмотров в файле
+  @file_put_contents($path_to_file , ($views_counter + 1));
+  $_SESSION[$path_to_file] =1;
 
-if ($_SESSION['login']) {
-  $write = @file_put_contents($path_to_file, $counter);
-  if(!$_SESSION[$path_to_file])
-  {
-    @file_put_contents($path_to_file , ($counter + 1));
-    $_SESSION[$path_to_file] =1;
-  }
+  // Увеличиваем счётчик просмотров в базе данных
+  $query = "UPDATE goods SET views_count = views_count + 1 WHERE id = '$good_id';";
+  mysqli_query($connection, $query ); 
 }
 ?>
 
@@ -69,7 +70,8 @@ if (isset($_GET['page']) and $_GET['page']=='specifications') {
            <!--  Если комментарий того пользователя, кто в данный момент авторизирован, то этот пользователь может удалить его -->
             <?php
             if ($comment['email']==$_SESSION['email']) {?>
-                <a href="comments/delete_comment.php?id=<?php echo $comment['id']; ?>"><span id="deleteIcon" class="material-icons md-24 text-danger">clear</span></a> 
+                <a href="comments/delete_comment.php?id=<?php echo $comment['id'];?>&good_id=<?php echo $good['id']; ?>">
+                  <span id="deleteIcon" class="material-icons md-24 text-danger">clear</span></a> 
                 <a onclick='edit_comment("<?php echo $comment['text']; ?>", <?php echo $comment['id']; ?>)'>
                     <span id="editIcon" class="material-icons md-18">edit</span></a> 
                 
