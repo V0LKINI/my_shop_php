@@ -42,7 +42,7 @@ if(($row = mysqli_fetch_assoc($query_select_user)) != false){
                     // Дезактивируем кнопку отправки
                     $('input[type=submit]').attr('disabled', true);
 
-                    password.blur(function(){
+                    password.keyup(function(){
                         if(password.val() != ''){
                             //Если длина введённого пароля меньше шести символов, то выводим сообщение об ошибке
                             if(password.val().length < 6){
@@ -73,11 +73,11 @@ if(($row = mysqli_fetch_assoc($query_select_user)) != false){
                                 $('#valid_password_message').text('');
                             }
                         }else{
-                            $('#valid_password_message').text('Введите пароль');
+                            $('#valid_password_message').text('Пароль не введён');
                         }
                     });
  
-                    confirm_password.blur(function(){
+                    confirm_password.keyup(function(){
                         //Если пароли не совпадают
                         if(password.val() !== confirm_password.val()){
                             //Выводим сообщение об ошибке
@@ -86,7 +86,7 @@ if(($row = mysqli_fetch_assoc($query_select_user)) != false){
                             $('input[type=submit]').attr('disabled', true);
                         }else{
                             //Иначе, проверяем длину пароля
-                            if(password.val().length > 6){
+                            if(password.val().length > 5){
                                 // Убираем сообщение об ошибке у поля для ввода пароля
                                 $('#valid_password_message').text('');
                                 //Активируем кнопку отправки
@@ -99,6 +99,7 @@ if(($row = mysqli_fetch_assoc($query_select_user)) != false){
                 });
             </script>
 
+
             <div class="container mt-4">
 				<div class="row">
 					<div class="col">
@@ -110,7 +111,9 @@ if(($row = mysqli_fetch_assoc($query_select_user)) != false){
 						<input type="hidden" name="token" value="<?=$token?>">
                         <input type="hidden" name="email" value="<?=$email?>">
 						<input class=" btn btn-success" type="submit" name="set_new_password" value="Изменить пароль" />
-					</form>
+					    <div style="color: #ff4136;" id="valid_confirm_password_message"></div>
+                        <div style="color: #ff4136;" id="valid_password_message"></div>
+                    </form>
 					<br>
 					</div>
 				</div>

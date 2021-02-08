@@ -3,9 +3,9 @@
 <?php require_once('comments/show_comments.php');?>
 
 <?php 
-$good_id = $good['id'];
-$page_id = md5($good_id);
-$path_to_file = "views_count/$page_id.dat";
+$good_id_without_md5 = $good['id'];
+$good_id = md5($good['id']);
+$path_to_file = "views_count/$good_id.dat";
 $views_counter = @file_get_contents($path_to_file);
 
 if ($_SESSION['login'] and !$_SESSION[$path_to_file]) {
@@ -14,7 +14,7 @@ if ($_SESSION['login'] and !$_SESSION[$path_to_file]) {
   $_SESSION[$path_to_file] =1;
 
   // Увеличиваем счётчик просмотров в базе данных
-  $query = "UPDATE goods SET views_count = views_count + 1 WHERE id = '$good_id';";
+  $query = "UPDATE goods SET views_count = $views_counter + 1 WHERE id = '$good_id_without_md5';";
   mysqli_query($connection, $query ); 
 }
 ?>
@@ -41,15 +41,15 @@ if ($_SESSION['login'] and !$_SESSION[$path_to_file]) {
     </div>
 </div>
 
-<a href="shop.php?id=<?php echo $good['id']; ?>&page=1" class="shopButton">Комментарии</a>
-<a href="shop.php?id=<?php echo $good['id']; ?>&page=specifications" class="shopButton">Характеристики</a>
+<a href="shop.php?id=<?php echo $good['id']; ?>&comment_page=1" class="shopButton">Комментарии</a>
+<a href="shop.php?id=<?php echo $good['id']; ?>&comment_page=specifications" class="shopButton">Характеристики</a>
 
 
 <?php 
 
-if (isset($_GET['page']) and $_GET['page']=='specifications') {
+if (isset($_GET['comment_page']) and $_GET['comment_page']=='specifications') {
     echo "<h1>Здесь будут характеристики товаров</h1>";
-} else { 
+} else{ 
 ?>
 
 <div id="comments">
@@ -95,24 +95,24 @@ if (isset($_GET['page']) and $_GET['page']=='specifications') {
     <?php endforeach; ?>
 
 <!-- Если существует только 1 страница с комментариями, пагинация не нужна -->
-<?php if ($count_page>1) {?>
+<?php if ($count_comment_page>1) {?>
     <div >
       <ul id="pagination">
         <?php
-        if ($page != 1) {
-            echo "<li><a href=shop.php?id=".$good_id."&page=1>&lt&lt </a></li>";
-            echo "<li><a href=shop.php?id=".$good_id."&page=".($page-1).">&lt </a></li>";
+        if ($comment_page != 1) {
+            echo "<li><a href=shop.php?id=".$good_id_without_md5."&comment_page=1>&lt&lt </a></li>";
+            echo "<li><a href=shop.php?id=".$good_id_without_md5."&comment_page=".($comment_page-1).">&lt </a></li>";
         }
         for ($i = $start; $i <= $end; $i++){
-            if ($page == $i) {
-                echo "<li><a class='active' href=shop.php?id=".$good_id."&page=".$i.">".$i." </a></li>";
+            if ($comment_page == $i) {
+                echo "<li><a class='active' href=shop.php?id=".$good_id_without_md5."&comment_page=".$i.">".$i." </a></li>";
             }else{
-                echo "<li><a href=shop.php?id=".$good_id."&page=".$i.">".$i." </a></li>";
+                echo "<li><a href=shop.php?id=".$good_id_without_md5."&comment_page=".$i.">".$i." </a></li>";
             } 
         }
-        if ($page != $count_page) {
-            echo "<li><a href=shop.php?id=".$good_id."&page=".($page+1).">&gt; </a></li>";
-            echo "<li><a href=shop.php?id=".$good_id."&page=".$count_page.">&gt;&gt; </a></li>";
+        if ($comment_page != $count_comment_page) {
+            echo "<li><a href=shop.php?id=".$good_id_without_md5."&comment_page=".($comment_page+1).">&gt; </a></li>";
+            echo "<li><a href=shop.php?id=".$good_id_without_md5."&comment_page=".$count_comment_page.">&gt;&gt; </a></li>";
         }
         ?>
       </ul>
@@ -140,7 +140,7 @@ if (!isset($_SESSION['login'])) {
             <br>
             <input type="hidden" name="name" value="<?=$_SESSION['name']?>">
             <input type="hidden" name="good_id" value="<?=$good['id']?>">
-            <input type="hidden" name="count_page" value="<?=$count_page?>">
+            <input type="hidden" name="count_comment_page" value="<?=$count_comment_page?>">
             <input id="edit_comment_id" type="hidden" name="comment_id" value="">
             <input class=" btn btn-success" type="submit" name="add_comment" value="Отправить" />
         </form>
@@ -165,5 +165,5 @@ if (!isset($_SESSION['login'])) {
     };
 </script>
 
-<!-- Закрываем два блока else:Первый определяет авторизирован ли пользователь, второй проверяет страницу page. Подключаем футер в самом конце страницы-->
+<!-- Закрываем два блока else:Первый определяет авторизирован ли пользователь, второй проверяет страницу comment_page. Подключаем футер в самом конце страницы-->
 <?php } } require_once('templates/footer.php'); ?>

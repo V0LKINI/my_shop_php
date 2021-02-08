@@ -31,16 +31,16 @@ if (isset($_POST['search_q']) and $_POST['search_q'] !='' ){
         <?php 
         //Для отображения количества просмотров товара
         $views_count = 0;
-        $page_id = md5($good['id']);
-        $path_to_file = "views_count/$page_id.dat";
+        $comment_page_id = md5($good['id']);
+        $path_to_file = "views_count/$comment_page_id.dat";
         if (file_exists($path_to_file)) {
              $views_count = @file_get_contents($path_to_file); 
         }
 
          //Для отображения количества комментариев товара
         $comments_count = 0;
-        $page_id = md5($good['id']);
-        $path_to_file = "comments/comments_count/$page_id.dat";
+        $comment_page_id = md5($good['id']);
+        $path_to_file = "comments/comments_count/$comment_page_id.dat";
         if (file_exists($path_to_file)) {
              $comments_count = @file_get_contents($path_to_file); 
         }
@@ -65,7 +65,7 @@ if (isset($_POST['search_q']) and $_POST['search_q'] !='' ){
           </span>
           <span id="shopUnitPrice"><?php echo $good['price'] . '$'; ?></span>
         </div>
-        <a href="shop.php?id=<?php echo $good['id']; ?>&page=1" class="shopUnitMore">
+        <a href="shop.php?id=<?php echo $good['id']; ?>&comment_page=1" class="shopUnitMore">
             Подробнее
         </a>
     </div>

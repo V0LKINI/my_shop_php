@@ -17,17 +17,17 @@
   $query = "INSERT INTO comments (id_good, name, email, text, date_add) VALUES ('$good_id', '$name', '$email', '$text_comment', NOW());";
   mysqli_query($connection, $query );
 
-  // Увеличиваем счётчик комментариев в базе данных
-  $query = "UPDATE goods SET comments_count = comments_count + 1 WHERE id = '$good_id';";
-  mysqli_query($connection, $query );
-
   // Увеличиваем счётчик комментариев в файле
   $page_id = md5($good_id);
   $path_to_file = "comments_count/$page_id.dat";
   $comments_count = @file_get_contents($path_to_file);
   $write = @file_put_contents($path_to_file, $comments_count + 1);
 
+  // Увеличиваем счётчик комментариев в базе данных
+  $query = "UPDATE goods SET comments_count = $comments_count + 1 WHERE id = '$good_id';";
+  mysqli_query($connection, $query );
+
   // Делаем редидект обратно
-  header("Location: http://brandshop/shop.php?id=".$good_id."&page=".$_POST['count_page']);
+  header("Location: http://brandshop/shop.php?id=".$good_id."&comment_page=".$_POST['count_comment_page']);
 ?>
  

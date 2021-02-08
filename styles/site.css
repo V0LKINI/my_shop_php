@@ -179,6 +179,13 @@ footer {
 
 /* ------------------ НАЧАЛО стилей для главной страницы магазниа ---------------------- */
 
+#shopGoods{
+    overflow:auto;
+    min-height: 600px;
+    width: 1100px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
 #shopWrap {
     width: 100%;
     float: left;
@@ -215,9 +222,6 @@ footer {
     text-align: justify;
     margin-top: 10px;
 }
-
-
-
 
 .shopUnitMore {
     border: none;
