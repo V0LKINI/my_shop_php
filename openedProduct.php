@@ -17,11 +17,12 @@ if ($_SESSION['login'] and !$_SESSION[$path_to_file]) {
   $query = "UPDATE goods SET views_count = $views_counter + 1 WHERE id = '$good_id_without_md5';";
   mysqli_query($connection, $query ); 
 }
+
 ?>
 
 
 
-<?php require_once('templates/header.php'); ?>
+<?php  require_once('templates/header.php'); ?>
 
 <!-- Вывод информации о товаре -->
 <div id="good">

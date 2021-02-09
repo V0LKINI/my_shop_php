@@ -39,22 +39,23 @@ $query_result = mysqli_query($connection, $query)
 $goods_count = mysqli_fetch_array($query_result)[0];
 
 //Если пользователь нажал "Подробнее" под товаром, то он переходит на эту же страницу, но в url передаётся id и, если товар с данным id есть в магазине, то подключается шаблон openedProduct.php с соотвествующим id товара, иначе попадаем в блок else, то есть выводится список всех товаров в магазине.
-$good_found = false;
+
 $id = $_GET['id'];
 
 //Если передан id, то проверяется наличие товара в магазине
 if (isset($id)) {
-    $good = [];
-    foreach ($goods as $product) {
-        if ($product['id'] == $id) {
-            $good = $product;
-            $good_found = true;
-            break;
-         }
-    } 
+    $query = "SELECT * FROM goods WHERE id=$id";
+    $query_result = mysqli_query($connection, $query) 
+        or die("Ошибка " . mysqli_error($connection));    
+    if ($query_result) {
+        while ($data_array = mysqli_fetch_assoc($query_result)) {
+            $good = $data_array;    
+        }
+    }
+      
 }
 
-if ($good_found) {
+if (isset ($good)) {
    require('openedProduct.php');
 } else { //всё что ниже выполняется если не найден товар
 ?>
@@ -122,12 +123,26 @@ if ($good_found) {
     <?php endforeach; ?>
 </div>
 
+<!-- кнопка "вверх" -->
+<div id="upbutton"></div>
+
 <!-- Скрипт скроллинга товаров в магазине -->
 <script>
+
   //запуск функции scrolling при прокрутке
   $(window).on("scroll", scrolling);
 
   function scrolling(){
+
+    //Скрипт для появления/исчезновения кнопки "вверх"
+    if ($(this).scrollTop() > 100) {
+        if ($('#upbutton').is(':hidden')) {
+            $('#upbutton').css({opacity : 1}).fadeIn('slow');
+        }
+    } else { 
+        $('#upbutton').stop(true, false).fadeOut('fast'); 
+    }
+
     //считывание текущей высоты контейнера
     var currentHeight = $("#shopGoods").height();
 
@@ -137,6 +152,11 @@ if ($good_found) {
       loader();
     }
   }
+
+  //скрипт кнопки "вверх"
+  $('#upbutton').on('click', function() {
+      $('html, body').stop().animate({scrollTop : 0}, 1);
+  });
 
   //количество подгружаемых записей из бд
   var count_per_page = 6;
@@ -149,7 +169,6 @@ if ($good_found) {
   function loader(){   
 
     if ( begin*count_per_page > '<?php echo $goods_count ?>' ) { 
-      $(window).off('scroll');
       return;
     }
 
@@ -175,9 +194,11 @@ if ($good_found) {
 
     //увеличение точки отсчета записей
     begin++;
-  } 
+  }
 </script>
 
-<?php require_once('templates/footer.php'); 
-}
-?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+</body>
+</html>
+
+<?php } ?>

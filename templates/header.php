@@ -86,4 +86,6 @@ if(isset($_COOKIE["password_cookie_token"]) && !empty($_COOKIE["password_cookie_
 
 </header>
 
+
+
 <div id="content">
