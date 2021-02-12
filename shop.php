@@ -10,12 +10,15 @@ if ($_GET['sort_by']=='views') {
 }else if ($_GET['sort_by']=='comments') {
   $sort_by_q = 'comments_count DESC';
   $sort_by = 'Комментариям';
-} else if ($_GET['sort_by']=='date_desc') {
-  $sort_by_q = 'id DESC';
-  $sort_by = 'Дате (сначала новые)';
-} else {
-  $sort_by_q = 'id ';
+} else if ($_GET['sort_by']=='date') {
+  $sort_by_q = 'id';
   $sort_by = 'Дате (сначала старые)';
+} else if ($_GET['sort_by']=='rating') {
+  $sort_by_q = 'rating DESC';
+  $sort_by = 'Рейтингу';
+} else {
+  $sort_by_q = 'id DESC';
+  $sort_by = 'Дате (сначала Новые)';
 }
 
 
@@ -73,54 +76,13 @@ if (isset ($good)) {
     <a href="http://brandshop/shop.php?sort_by=date_desc">Дате(сначала новые)</a>
     <a href="http://brandshop/shop.php?sort_by=views">Просмотрам</a>
     <a href="http://brandshop/shop.php?sort_by=comments">Комментариям</a>
+    <a href="http://brandshop/shop.php?sort_by=rating">Рейтингу</a>
   </div>
 </div>
 
-<div id="shopGoods">
-    <?php foreach ($goods as $good): ?>
-        
-        <?php 
-        //Для отображения количества просмотров товара
-        $views_count = 0;
-        $good_id = md5($good['id']);
-        $path_to_file = "views_count/$good_id.dat";
-        if (file_exists($path_to_file)) {
-             $views_count = @file_get_contents($path_to_file); 
-        }
-
-         //Для отображения количества комментариев товара
-        $comments_count = 0;
-        $good_id = md5($good['id']);
-        $path_to_file = "comments/comments_count/$good_id.dat";
-        if (file_exists($path_to_file)) {
-             $comments_count = @file_get_contents($path_to_file); 
-        }
-        
-    ?>    
-
-    <div class="shopUnit">
-        <img src="<?php echo $good['img']; ?>" />
-
-        <div class="shopUnitName">
-           <?php echo $good['name']; ?>
-        </div>
-        <div class="shopUnitShortDesc">
-            <?php echo substr($good['description'],0,60)."..."; ?>
-        </div>
-        <div class="shopUnitPriceViewsComments">
-          <span id="shopUnitViews"> 
-            <?php echo $views_count; ?><span id="viewsIcon" class="material-icons">visibility</span>
-          </span>
-          <span id="shopUnitComments"> 
-            <?php echo $comments_count; ?><span id="commentIcon" class="material-icons">comment</span>
-          </span>
-          <span id="shopUnitPrice"><?php echo $good['price'] . '$'; ?></span>
-        </div>
-        <a href="shop.php?id=<?php echo $good['id']; ?>&comment_page=1" class="shopUnitMore">
-            Подробнее
-        </a>
-    </div>
-    <?php endforeach; ?>
+<!-- Вывод товаров в магазине -->
+<div id="shopGoods">  
+    <?php require('templates/shop_unit.php'); ?>
 </div>
 
 <!-- кнопка "вверх" -->
@@ -131,9 +93,8 @@ if (isset ($good)) {
 
   //запуск функции scrolling при прокрутке
   $(window).on("scroll", scrolling);
-
+  
   function scrolling(){
-
     //Скрипт для появления/исчезновения кнопки "вверх"
     if ($(this).scrollTop() > 100) {
         if ($('#upbutton').is(':hidden')) {
@@ -188,10 +149,8 @@ if (isset ($good)) {
     function onAjaxSuccess(data){
       //добавляем полученные данные в конец контейнера
       $("#shopGoods").append(data);
-      //возвращение вызова функции при прокрутке
-
     }
-
+    
     //увеличение точки отсчета записей
     begin++;
   }

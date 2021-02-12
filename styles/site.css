@@ -246,51 +246,58 @@ footer {
     text-decoration: none;
 }
 
+.shopUnitMore:hover {
+    color: #fff;
+    background-color: #777777;
+}
+
+
 .shopUnitPriceViewsComments{
-    position: relative;
     padding-right: 20px;
     margin-top: 10px;
     height: 15px;
     color: #6a6747;
     font-weight: bold;
     width: 100%;
+
 }
 
 #shopUnitPrice{
     display: inline-block;
-    position: absolute;
-    right: 3%;
+     float: right;
 }
 #shopUnitViews{
     display: inline-block;
-    position: absolute;
-    left: 3%;
 }
 
 #shopUnitComments{
     display: inline-block;
-    position: absolute;
-    left: 17%;
+}
+
+#shopUnitRating{
+    display: inline-block;
 }
 
 #viewsIcon {
+    display: inline-block;
+    vertical-align: bottom;
+    font-size: 24px;
     margin-left: 3px;
-      position:absolute; 
-      bottom:1;
 }
 
 #commentIcon {
-    margin-left: 3px;
-    position:absolute; 
-    bottom:1;
+    vertical-align: bottom;
     font-size: 22px;
     padding-top: 2px;
+    margin-left: 3px;
 }
 
-.shopUnitMore:hover {
-    color: #fff;
-    background-color: #777777;
+#ratingIcon {
+    vertical-align: bottom;
+    font-size: 24px;
+    margin-left: 3px;
 }
+
 
 /* Dropdown Button */
 .dropbtn {
@@ -345,6 +352,72 @@ footer {
 
 /* ---------------- НАЧАЛО стилей для страницы с открытым товаром ----------------------- */
 
+#star-1{
+    width:  34px;  
+    height: 34px; 
+    margin: 0;
+    padding:0;
+    border: 0;
+    background: transparent url('/images/star.png') no-repeat center top;
+    text-indent: -1000em;
+    cursor: pointer;
+    cursor: hand;
+}
+
+#star-2{
+    width:  34px;  
+    height: 34px; 
+    margin: 0;
+    padding:0;
+    border: 0;
+    background: transparent url('/images/star.png') no-repeat center top;
+    text-indent: -1000em;
+    cursor: pointer;
+    cursor: hand;
+}
+
+#star-3{
+    width:  34px;  
+    height: 34px; 
+    margin: 0;
+    padding:0;
+    border: 0;
+    background: transparent url('/images/star.png') no-repeat center top;
+    text-indent: -1000em;
+    cursor: pointer;
+    cursor: hand;
+}
+
+#star-4{
+    width:  34px;  
+    height: 34px; 
+    margin: 0;
+    padding:0;
+    border: 0;
+    background: transparent url('/images/star.png') no-repeat center top;
+    text-indent: -1000em;
+    cursor: pointer;
+    cursor: hand;
+}
+
+#star-5{
+    width:  34px;  
+    height: 34px; 
+    margin: 0;
+    padding:0;
+    border: 0;
+    background: transparent url('/images/star.png') no-repeat center top;
+    text-indent: -1000em;
+    cursor: pointer;
+    cursor: hand;
+}
+#star-1, #star-2, #star-3, #star-4,#star-5:focus {
+     outline: none;
+}
+
+#good_rate{
+    margin-top: 20px;
+}
 .shopButton {
     border: none;
     margin-top: 5px;

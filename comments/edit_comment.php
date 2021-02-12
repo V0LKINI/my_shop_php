@@ -9,5 +9,5 @@
   mysqli_query($connection, $query ); // Изменяем комментарий в таблице
 
   //Делаем редидект обратно
-  header("Location: ".$_SERVER["HTTP_REFERER"]);
+ header("Location: ".$_SERVER["HTTP_REFERER"]);
  ?>

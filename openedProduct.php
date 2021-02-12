@@ -3,19 +3,22 @@
 <?php require_once('comments/show_comments.php');?>
 
 <?php 
-$good_id_without_md5 = $good['id'];
-$good_id = md5($good['id']);
-$path_to_file = "views_count/$good_id.dat";
-$views_counter = @file_get_contents($path_to_file);
+$key='good'.$good['id'];
+$good_id = $good['id'];
+$user_login = $_SESSION['login'];
 
-if ($_SESSION['login'] and !$_SESSION[$path_to_file]) {
-  // Увеличиваем счётчик просмотров в файле
-  @file_put_contents($path_to_file , ($views_counter + 1));
-  $_SESSION[$path_to_file] =1;
+if ($_SESSION['login'] and $_SESSION[$key]!=1) {
+  $_SESSION[$key] =1;
 
   // Увеличиваем счётчик просмотров в базе данных
-  $query = "UPDATE goods SET views_count = $views_counter + 1 WHERE id = '$good_id_without_md5';";
+  $query = "UPDATE goods SET views_count = views_count + 1 WHERE id = $good_id;";
   mysqli_query($connection, $query ); 
+}
+
+if ($_SESSION['login']){
+  $query = "SELECT rating FROM  goods_rate WHERE user_login='$user_login' AND good_id=$good_id;";
+  $query_result = mysqli_query($connection, $query);
+  $rating = mysqli_fetch_assoc($query_result)['rating'];
 }
 
 ?>
@@ -39,6 +42,91 @@ if ($_SESSION['login'] and !$_SESSION[$path_to_file]) {
         <div id="openedProduct-price">
             <?php echo $good['price'] . '$'; ?>
         </div>
+        
+        <?php if ($_SESSION['login']){ ?>
+        <div id="good_rate">
+          <h4>Ваша оценка</h4>
+          <form method="POST">
+            <div class="rating-area">
+              <button type="submit" class="star" id="star-1" name="rating" value="1">
+              <button type="submit" class="star" id="star-2" name="rating" value="2">
+              <button type="submit" class="star" id="star-3" name="rating" value="3">
+              <button type="submit" class="star" id="star-4" name="rating" value="4">
+              <button type="submit" class="star" id="star-5" name="rating" value="5">
+            </div>
+          </form>
+        </div>
+
+        <script type="text/javascript">
+
+          //Анимация звёздочек
+          $("#star-1").hover( handlerIn, handlerOut ); 
+          $("#star-2").hover( handlerIn, handlerOut );
+          $("#star-3").hover( handlerIn, handlerOut );
+          $("#star-4").hover( handlerIn, handlerOut );
+          $("#star-5").hover( handlerIn, handlerOut );
+
+          rating = <?php echo $rating ?>;
+
+          function handlerIn(string){
+            var val = string.currentTarget.value;
+            for (var i = 1; i <= val; i++) {
+           $("#star-"+i).css('background', "transparent url('/images/active_star.png') no-repeat center top");
+           }
+            for (var j = +val+1; j <= 5; j++) {
+            $("#star-"+j).css('background', "transparent url('/images/star.png') no-repeat center top");
+            }
+          }
+
+          function handlerOut(){
+            for (var i = 1; i <= rating; i++) {
+            $("#star-"+i).css('background', "transparent url('/images/active_star.png') no-repeat center top");
+              }
+            for (var j = +rating+1; j <= 5; j++) {
+            $("#star-"+j).css('background', "transparent url('/images/star.png') no-repeat center top");
+            }
+          }
+
+
+          $(document).ready(function() {
+          $('button').click(function(e) {
+            // Stop form from sending request to server
+            e.preventDefault();
+
+            var star = $(this);
+
+            $.ajax({
+              method: "POST",
+              url: "./goods_rate.php",
+              //dataType: "json",
+              data: {
+                "good_id": <?= $good['id'] ?>,
+                "user_login": '<?=$_SESSION["login"]?>',
+                "rating": star.val()
+              },
+              success: function() {
+                    rating = star.val();
+                    for (var i = 1; i <= star.val(); i++) {
+                      $("#star-"+i).css('background', "transparent url('/images/active_star.png') no-repeat center top");
+                  }
+                    for (var j = +star.val()+1; j <= 5; j++) {
+                        $("#star-"+j).css('background', "transparent url('/images/star.png') no-repeat center top");
+                    }
+              },
+              error: function(er) {
+                console.log(er);
+              }
+            });
+          })
+        });
+
+          for (var i = 1; i <= <?php echo $rating ?>; i++) {
+            $("#star-"+i).css('background', "transparent url('/images/active_star.png') no-repeat center top");
+          }
+
+        </script>
+        <?php } ?>
+
     </div>
 </div>
 
@@ -63,7 +151,7 @@ if (isset($_GET['comment_page']) and $_GET['comment_page']=='specifications') {
 
   <div >
     <!-- Вывод комментариев -->
-    <?php foreach ($comments as $comment): ?>
+    <?php foreach ($comments as $comment):  ?>
     <div id=comment>
         <div >
            
@@ -73,7 +161,12 @@ if (isset($_GET['comment_page']) and $_GET['comment_page']=='specifications') {
             if ($comment['email']==$_SESSION['email']) {?>
                 <a href="comments/delete_comment.php?id=<?php echo $comment['id'];?>&good_id=<?php echo $good['id']; ?>">
                   <span id="deleteIcon" class="material-icons md-24 text-danger">clear</span></a> 
-                <a onclick='edit_comment("<?php echo $comment['text']; ?>", <?php echo $comment['id']; ?>)'>
+                  <?php 
+                  $comment_text = $comment['text'];
+                  $comment_id = $comment['id'];
+                  ?>
+
+                <a onclick='edit_comment("<?php echo $comment_text; ?>", <?php echo $comment_id; ?>)'>
                     <span id="editIcon" class="material-icons md-18">edit</span></a> 
                 
             <?php } ?>     
@@ -101,19 +194,19 @@ if (isset($_GET['comment_page']) and $_GET['comment_page']=='specifications') {
       <ul id="pagination">
         <?php
         if ($comment_page != 1) {
-            echo "<li><a href=shop.php?id=".$good_id_without_md5."&comment_page=1>&lt&lt </a></li>";
-            echo "<li><a href=shop.php?id=".$good_id_without_md5."&comment_page=".($comment_page-1).">&lt </a></li>";
+            echo "<li><a href=shop.php?id=".$good_id."&comment_page=1>&lt&lt </a></li>";
+            echo "<li><a href=shop.php?id=".$good_id."&comment_page=".($comment_page-1).">&lt </a></li>";
         }
         for ($i = $start; $i <= $end; $i++){
             if ($comment_page == $i) {
-                echo "<li><a class='active' href=shop.php?id=".$good_id_without_md5."&comment_page=".$i.">".$i." </a></li>";
+                echo "<li><a class='active' href=shop.php?id=".$good_id."&comment_page=".$i.">".$i." </a></li>";
             }else{
-                echo "<li><a href=shop.php?id=".$good_id_without_md5."&comment_page=".$i.">".$i." </a></li>";
+                echo "<li><a href=shop.php?id=".$good_id."&comment_page=".$i.">".$i." </a></li>";
             } 
         }
         if ($comment_page != $count_comment_page) {
-            echo "<li><a href=shop.php?id=".$good_id_without_md5."&comment_page=".($comment_page+1).">&gt; </a></li>";
-            echo "<li><a href=shop.php?id=".$good_id_without_md5."&comment_page=".$count_comment_page.">&gt;&gt; </a></li>";
+            echo "<li><a href=shop.php?id=".$good_id."&comment_page=".($comment_page+1).">&gt; </a></li>";
+            echo "<li><a href=shop.php?id=".$good_id."&comment_page=".$count_comment_page.">&gt;&gt; </a></li>";
         }
         ?>
       </ul>

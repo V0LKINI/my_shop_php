@@ -25,52 +25,7 @@ if (isset($_POST['search_q']) and $_POST['search_q'] !='' ){
 <?php if ($goods){ ?>
 <h1>Найденные товары:</h1>
 
-<div>
-    <?php foreach ($goods as $good): ?>
-        
-        <?php 
-        //Для отображения количества просмотров товара
-        $views_count = 0;
-        $comment_page_id = md5($good['id']);
-        $path_to_file = "views_count/$comment_page_id.dat";
-        if (file_exists($path_to_file)) {
-             $views_count = @file_get_contents($path_to_file); 
-        }
-
-         //Для отображения количества комментариев товара
-        $comments_count = 0;
-        $comment_page_id = md5($good['id']);
-        $path_to_file = "comments/comments_count/$comment_page_id.dat";
-        if (file_exists($path_to_file)) {
-             $comments_count = @file_get_contents($path_to_file); 
-        }
-        
-    ?>    
-
-    <div class="shopUnit">
-        <img src="<?php echo $good['img']; ?>" />
-
-        <div class="shopUnitName">
-           <?php echo $good['name']; ?>
-        </div>
-        <div class="shopUnitShortDesc">
-            <?php echo substr($good['description'],0,60)."..."; ?>
-        </div>
-        <div class="shopUnitPriceViewsComments">
-          <span id="shopUnitViews"> 
-            <?php echo $views_count; ?><span id="viewsIcon" class="material-icons">visibility</span>
-          </span>
-          <span id="shopUnitComments"> 
-            <?php echo $comments_count; ?><span id="commentIcon" class="material-icons">comment</span>
-          </span>
-          <span id="shopUnitPrice"><?php echo $good['price'] . '$'; ?></span>
-        </div>
-        <a href="shop.php?id=<?php echo $good['id']; ?>&comment_page=1" class="shopUnitMore">
-            Подробнее
-        </a>
-    </div>
-    <?php endforeach; ?>
-</div>
+<?php require('templates/shop_unit.php'); ?>
 
 <?php } else{ ?>
 <h1>Товаров не найдено=(</h1>
