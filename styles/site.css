@@ -493,7 +493,7 @@ footer {
     margin-top: 20px;
 }
 
-#comment {
+.comment {
     margin-bottom: 20px;
 }
 
@@ -524,11 +524,11 @@ footer {
     background-color: #ddd;
 }
 
-#comment:hover #deleteIcon{
+.comment:hover #deleteIcon{
     opacity: 1.0;
 }
 
-#comment:hover #editIcon{
+.comment:hover #editIcon{
     opacity: 1.0;
 }
 

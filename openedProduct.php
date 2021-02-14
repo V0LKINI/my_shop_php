@@ -66,8 +66,13 @@ if ($_SESSION['login']){
           $("#star-4").hover( handlerIn, handlerOut );
           $("#star-5").hover( handlerIn, handlerOut );
 
-          rating = <?php echo $rating ?>;
 
+      <?php if ($rating) { ?>
+           rating = <?php echo $rating; 
+           } else { ?>
+             rating = 0;
+      <?php } ?>
+         
           function handlerIn(string){
             var val = string.currentTarget.value;
             for (var i = 1; i <= val; i++) {
@@ -98,7 +103,6 @@ if ($_SESSION['login']){
             $.ajax({
               method: "POST",
               url: "./goods_rate.php",
-              //dataType: "json",
               data: {
                 "good_id": <?= $good['id'] ?>,
                 "user_login": '<?=$_SESSION["login"]?>',
@@ -120,7 +124,7 @@ if ($_SESSION['login']){
           })
         });
 
-          for (var i = 1; i <= <?php echo $rating ?>; i++) {
+          for (var i = 1; i <= rating; i++) {
             $("#star-"+i).css('background', "transparent url('/images/active_star.png') no-repeat center top");
           }
 
@@ -152,7 +156,7 @@ if (isset($_GET['comment_page']) and $_GET['comment_page']=='specifications') {
   <div >
     <!-- Вывод комментариев -->
     <?php foreach ($comments as $comment):  ?>
-    <div id=comment>
+    <div id="comment-<?= $comment['id'] ?>" class="comment">
         <div >
            
            <span id="comment_name"><?php  echo '<strong>'.$comment['name'].'</strong>:';?> </span>
@@ -162,6 +166,7 @@ if (isset($_GET['comment_page']) and $_GET['comment_page']=='specifications') {
                 <a href="comments/delete_comment.php?id=<?php echo $comment['id'];?>&good_id=<?php echo $good['id']; ?>">
                   <span id="deleteIcon" class="material-icons md-24 text-danger">clear</span></a> 
                   <?php 
+                  
                   $comment_text = $comment['text'];
                   $comment_id = $comment['id'];
                   ?>
@@ -236,7 +241,7 @@ if (!isset($_SESSION['login'])) {
             <input type="hidden" name="good_id" value="<?=$good['id']?>">
             <input type="hidden" name="count_comment_page" value="<?=$count_comment_page?>">
             <input id="edit_comment_id" type="hidden" name="comment_id" value="">
-            <input class=" btn btn-success" type="submit" name="add_comment" value="Отправить" />
+            <input id="comment_submit" class=" btn btn-success" type="submit" name="add_comment" value="Добавить"> 
         </form>
         <br>
         </div>
@@ -244,18 +249,49 @@ if (!isset($_SESSION['login'])) {
 </div>
 
 <script>
+
     function edit_comment(text, comment_id) {
-        var area = document.getElementById("addCommentArea");
-        area.innerHTML = text;
-        area_length = (area.innerHTML.length);
+        //получаем поле для редактирования
+        var area = $("#addCommentArea");
+
+        //получаем текст редактируемого комментария
+        selected_comment = '#comment-' + comment_id + ' #comment_text';
+        text_comment = String($(selected_comment).text()).trim();
+
+        //вставляем текст комментария в форму
+        area.val(text_comment).length;
         area.focus();
-        area.setSelectionRange(area_length, area_length);
 
-        //Изменяем файл скрипта с добавления на изменение комментария
-        document.getElementById('Add_edit_comment_form').action = 'comments/edit_comment.php';
+        //меняем название кнопки
+        $('#comment_submit').val('Сохранить');
 
-        //Меняет значение скрытого input comment_id чтоб передать id комментария скрипту edit_comment
-        document.getElementById('edit_comment_id').value = comment_id;
+        $('#comment_submit').click(function(e) {
+            // Stop form from sending request to server
+            e.preventDefault();
+
+            //получаем введённый в поле текст
+            text_comment = $('#addCommentArea').val();
+
+            $.ajax({
+              method: "POST",
+              url: "comments/edit_comment.php",
+              data: {
+                "comment_id": comment_id,
+                "text_comment": text_comment
+              },
+              success: function() {
+                //Возвращаем кнопку submit в первоначальное состояние
+                $('#comment_submit').val('Добавить').blur().unbind('click');
+                $('#addCommentArea').val('');
+                //изменяем текст комментария пользователя
+                selected_comment = '#comment-' + comment_id + ' #comment_text';
+                $(selected_comment).text(text_comment);
+              },
+              error: function(er) {
+                console.log(er);
+              }
+            });
+          })
     };
 </script>
 

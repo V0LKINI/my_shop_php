@@ -3,7 +3,7 @@
   require_once('../auth/connection.php');
 
   //Принимаем данные из формы
-  $name = $_POST["name"];
+  $name = $_SESSION['name'];
   $good_id = $_POST["good_id"];
   $text_comment = $_POST["text_comment"];
   $email = $_SESSION['email']; 
