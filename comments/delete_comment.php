@@ -1,16 +1,14 @@
 <?php
-  session_start(); 
   require_once('../auth/connection.php');
 
-  $id = $_GET['id'];
-  $good_id = $_GET['good_id'];
+  $id = $_POST['id'];
+  $good_id = $_POST['good_id'];
+
+  // Удаляем комментарий из базы данных
   $query = "DELETE FROM comments WHERE id='$id';";
-  mysqli_query($connection, $query );// Удаляем комментарий из таблицы
+  mysqli_query($connection, $query );
 
   // Уменьшаем счётчик комментариев в базе данных
   $query = "UPDATE goods SET comments_count = comments_count - 1 WHERE id = '$good_id';";
   mysqli_query($connection, $query );
-
-  // Делаем реридект обратно
-  header("Location: ".$_SERVER["HTTP_REFERER"]);
 ?>

@@ -505,6 +505,7 @@ footer {
 }
 
 #deleteIcon:hover{
+    cursor: pointer;
     background-color: #ddd;
 }
 

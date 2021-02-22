@@ -57,6 +57,7 @@ if ($_SESSION['login']){
           </form>
         </div>
 
+
         <script type="text/javascript">
 
           //Анимация звёздочек
@@ -149,10 +150,9 @@ if (isset($_GET['comment_page']) and $_GET['comment_page']=='specifications') {
   <h2>Комментарии:</h2>
   <?php 
   if (empty($comments)) {
-      echo "Здесь ещё нет ни одного комментария. Будьте первым!";
+      echo "<p id='noComments'>Здесь ещё нет ни одного комментария. Будьте первым!</p>";
   }else { //Если существует хотя бы 1 комментарий
   ?>
-
   <div >
     <!-- Вывод комментариев -->
     <?php foreach ($comments as $comment):  ?>
@@ -162,16 +162,12 @@ if (isset($_GET['comment_page']) and $_GET['comment_page']=='specifications') {
            <span id="comment_name"><?php  echo '<strong>'.$comment['name'].'</strong>:';?> </span>
            <!--  Если комментарий того пользователя, кто в данный момент авторизирован, то этот пользователь может удалить его -->
             <?php
+             $comment_text = $comment['text'];
+             $comment_id = $comment['id'];
             if ($comment['email']==$_SESSION['email']) {?>
-                <a href="comments/delete_comment.php?id=<?php echo $comment['id'];?>&good_id=<?php echo $good['id']; ?>">
+                <a onclick='delete_comment(<?php echo $comment_id ?>,<?php echo $good['id']; ?>)'>
                   <span id="deleteIcon" class="material-icons md-24 text-danger">clear</span></a> 
-                  <?php 
-                  
-                  $comment_text = $comment['text'];
-                  $comment_id = $comment['id'];
-                  ?>
-
-                <a onclick='edit_comment("<?php echo $comment_text; ?>", <?php echo $comment_id; ?>)'>
+                <a onclick='edit_comment(<?php echo $comment_id; ?>)'>
                     <span id="editIcon" class="material-icons md-18">edit</span></a> 
                 
             <?php } ?>     
@@ -193,31 +189,7 @@ if (isset($_GET['comment_page']) and $_GET['comment_page']=='specifications') {
     </div>
     <?php endforeach; ?>
 
-<!-- Если существует только 1 страница с комментариями, пагинация не нужна -->
-<?php if ($count_comment_page>1) {?>
-    <div >
-      <ul id="pagination">
-        <?php
-        if ($comment_page != 1) {
-            echo "<li><a href=shop.php?id=".$good_id."&comment_page=1>&lt&lt </a></li>";
-            echo "<li><a href=shop.php?id=".$good_id."&comment_page=".($comment_page-1).">&lt </a></li>";
-        }
-        for ($i = $start; $i <= $end; $i++){
-            if ($comment_page == $i) {
-                echo "<li><a class='active' href=shop.php?id=".$good_id."&comment_page=".$i.">".$i." </a></li>";
-            }else{
-                echo "<li><a href=shop.php?id=".$good_id."&comment_page=".$i.">".$i." </a></li>";
-            } 
-        }
-        if ($comment_page != $count_comment_page) {
-            echo "<li><a href=shop.php?id=".$good_id."&comment_page=".($comment_page+1).">&gt; </a></li>";
-            echo "<li><a href=shop.php?id=".$good_id."&comment_page=".$count_comment_page.">&gt;&gt; </a></li>";
-        }
-        ?>
-      </ul>
-    </div>
-<?php } ?> <!-- Кончается блок проверки количества страниц -->
-  </div>
+ </div>
 <?php } ?> <!-- Кончается блок проверки наличия комментариев  -->
 
 </div>
@@ -234,14 +206,11 @@ if (!isset($_SESSION['login'])) {
         <div class="col" style="padding: 0;">
         <!-- Форма авторизации -->
         <h2>Добавить комментарий</h2>
-        <form action="comments/add_comment.php" method="post" id="Add_edit_comment_form">
+        <form>
             <textarea id="addCommentArea" cols="70" rows="2" name="text_comment" required="required"></textarea>
             <br>
-            <input type="hidden" name="name" value="<?=$_SESSION['name']?>">
-            <input type="hidden" name="good_id" value="<?=$good['id']?>">
-            <input type="hidden" name="count_comment_page" value="<?=$count_comment_page?>">
             <input id="edit_comment_id" type="hidden" name="comment_id" value="">
-            <input id="comment_submit" class=" btn btn-success" type="submit" name="add_comment" value="Добавить"> 
+            <a id="add_comment" class=" btn btn-success comment_button " onclick='add_comment(<?php echo $good['id'] ?>)' name="add_comment" >Добавить</a> 
         </form>
         <br>
         </div>
@@ -250,49 +219,113 @@ if (!isset($_SESSION['login'])) {
 
 <script>
 
-    function edit_comment(text, comment_id) {
-        //получаем поле для редактирования
-        var area = $("#addCommentArea");
+  // Дезактивируем кнопку отправки
+  $('.comment_button').addClass('disabled');
 
-        //получаем текст редактируемого комментария
-        selected_comment = '#comment-' + comment_id + ' #comment_text';
-        text_comment = String($(selected_comment).text()).trim();
+  $('#addCommentArea').keyup(function(){
+    if ($('#addCommentArea').val().trim().length > 0){
+       $('.comment_button').removeClass('disabled');
+    }else {
+      $('.comment_button').addClass('disabled');
+    }
+   });
 
-        //вставляем текст комментария в форму
-        area.val(text_comment).length;
-        area.focus();
+  function edit_comment(comment_id) {
 
-        //меняем название кнопки
-        $('#comment_submit').val('Сохранить');
+      //изменяем аттрибуты и текст кнопки, чтоб комментарий редактировался, а не добавлялся
+      $("#add_comment").attr({"id": "edit_comment", "onclick": ""}).text('Сохранить').removeClass('disabled');
 
-        $('#comment_submit').click(function(e) {
-            // Stop form from sending request to server
-            e.preventDefault();
+      //получаем поле для редактирования
+      var area = $("#addCommentArea");
 
-            //получаем введённый в поле текст
-            text_comment = $('#addCommentArea').val();
+      //получаем текст редактируемого комментария
+      selected_comment = '#comment-' + comment_id + ' #comment_text';
+      text_comment = String($(selected_comment).text()).trim();
 
-            $.ajax({
-              method: "POST",
-              url: "comments/edit_comment.php",
-              data: {
-                "comment_id": comment_id,
-                "text_comment": text_comment
-              },
-              success: function() {
-                //Возвращаем кнопку submit в первоначальное состояние
-                $('#comment_submit').val('Добавить').blur().unbind('click');
-                $('#addCommentArea').val('');
-                //изменяем текст комментария пользователя
-                selected_comment = '#comment-' + comment_id + ' #comment_text';
-                $(selected_comment).text(text_comment);
-              },
-              error: function(er) {
-                console.log(er);
+      //вставляем текст комментария в форму
+      area.val(text_comment).length;
+      area.focus();
+
+      $('#edit_comment').click(function(e) {
+          // Stop form from sending request to server
+          e.preventDefault();
+
+          //получаем введённый в поле текст
+          text_comment = $('#addCommentArea').val();
+
+
+          $.ajax({
+            method: "POST",
+            url: "comments/edit_comment.php",
+            data: {
+              "comment_id": comment_id,
+              "text_comment": text_comment
+            },
+            success: function() {
+              //Возвращаем кнопку в первоначальное состояние
+              $('#edit_comment').attr({"id": "add_comment", "onclick": "add_comment(<?php echo $good['id'] ?>)"}).text('Добавить').blur().unbind('click').addClass('disabled');
+              $('#addCommentArea').val('');
+              //изменяем текст комментария пользователя
+              selected_comment = '#comment-' + comment_id + ' #comment_text';
+              $(selected_comment).text(text_comment);
+            },
+            error: function(er) {
+              console.log(er);
+            }
+          });
+        })
+  };
+
+  function delete_comment(comment_id, good_id,) {
+          $.ajax({
+            method: "POST",
+            url: "comments/delete_comment.php",
+            data: {
+              "id": comment_id,
+              "good_id": good_id
+            },
+            success: function() {
+              selected_comment = '#comment-' + comment_id;
+              $(selected_comment).detach();
+              
+              if ($('.comment').length==0) {
+                $('#comments').html("<h2>Комментарии:</h2> <p id='noComments'>Здесь ещё нет ни одного комментария. Будьте первым!</p>");
               }
-            });
-          })
-    };
+  
+            },
+            error: function(er) {
+              console.log(er);
+            }
+          });
+  };
+
+    function add_comment(good_id) {
+        //получаем введённый в поле текст
+        text_comment = $('#addCommentArea').val();
+
+        $.ajax({
+          method: "POST",
+          url: "comments/add_comment.php",
+          data: {
+            "good_id": good_id,
+            "text_comment": text_comment
+          },
+          success: function(data) {
+            //добавляем комментарий в конец контейнера
+            $("#comments").append(data);
+
+            $('#addCommentArea').val('');
+            $('#add_comment').addClass('disabled');
+
+            if ($('.comment').length>0) {
+                $('#noComments').detach();
+              }
+          },
+          error: function(er) {
+            console.log(er);
+          }
+        });
+};
 </script>
 
 <!-- Закрываем два блока else:Первый определяет авторизирован ли пользователь, второй проверяет страницу comment_page. Подключаем футер в самом конце страницы-->
