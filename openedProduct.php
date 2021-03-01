@@ -1,6 +1,6 @@
 
 <!-- Подключаем файл show_comments, который определяет, какие комментарии и сколько страниц с комментариями будут выведено ниже в блоке comments-->
-<?php require_once('comments/show_comments.php');?>
+
 
 <?php 
 $key='good'.$good['id'];
@@ -19,11 +19,10 @@ if ($_SESSION['login']){
   $query = "SELECT rating FROM  goods_rate WHERE user_login='$user_login' AND good_id=$good_id;";
   $query_result = mysqli_query($connection, $query);
   $rating = mysqli_fetch_assoc($query_result)['rating'];
+
 }
 
 ?>
-
-
 
 <?php  require_once('templates/header.php'); ?>
 
@@ -149,45 +148,14 @@ if (isset($_GET['comment_page']) and $_GET['comment_page']=='specifications') {
 <div id="comments">
   <h2>Комментарии:</h2>
   <?php 
+
+  //Вывод первых комментариев
+  require_once('comments/show_comments.php');
+
   if (empty($comments)) {
       echo "<p id='noComments'>Здесь ещё нет ни одного комментария. Будьте первым!</p>";
   }else { //Если существует хотя бы 1 комментарий
   ?>
-  <div >
-    <!-- Вывод комментариев -->
-    <?php foreach ($comments as $comment):  ?>
-    <div id="comment-<?= $comment['id'] ?>" class="comment">
-        <div >
-           
-           <span id="comment_name"><?php  echo '<strong>'.$comment['name'].'</strong>:';?> </span>
-           <!--  Если комментарий того пользователя, кто в данный момент авторизирован, то этот пользователь может удалить его -->
-            <?php
-             $comment_text = $comment['text'];
-             $comment_id = $comment['id'];
-            if ($comment['email']==$_SESSION['email']) {?>
-                <a onclick='delete_comment(<?php echo $comment_id ?>,<?php echo $good['id']; ?>)'>
-                  <span id="deleteIcon" class="material-icons md-24 text-danger">clear</span></a> 
-                <a onclick='edit_comment(<?php echo $comment_id; ?>)'>
-                    <span id="editIcon" class="material-icons md-18">edit</span></a> 
-                
-            <?php } ?>     
-        </div>
-        <div id="comment_text">
-            <?php echo $comment['text']; ?>
-        </div>
-        <div id="date_add">
-           <?php 
-           list($year, $month, $day, $hours, $minutes, $seconds) = preg_split('/[^\w]+/', $comment['date_add']);
-           if (date('d') == $day and date('m') == $month and date('Y') == $year) {
-               echo "сегодня в ".$hours.":".$minutes;
-           } else if (date('d') == ($day+1) and date('m') == $month and date('Y') == $year) {
-               echo "вчера в ".$hours.":".$minutes;
-           }else echo $day."-" .$month."-".$year." ".$hours.":".$minutes;
-
-           ?>
-        </div>  
-    </div>
-    <?php endforeach; ?>
 
  </div>
 <?php } ?> <!-- Кончается блок проверки наличия комментариев  -->
@@ -218,7 +186,8 @@ if (!isset($_SESSION['login'])) {
 </div>
 
 <script>
-
+  var start = document.getElementsByClassName('comment').length;
+  
   // Дезактивируем кнопку отправки
   $('.comment_button').addClass('disabled');
 
@@ -253,7 +222,6 @@ if (!isset($_SESSION['login'])) {
           //получаем введённый в поле текст
           text_comment = $('#addCommentArea').val();
 
-
           $.ajax({
             method: "POST",
             url: "comments/edit_comment.php",
@@ -287,8 +255,9 @@ if (!isset($_SESSION['login'])) {
             success: function() {
               selected_comment = '#comment-' + comment_id;
               $(selected_comment).detach();
-              
-              if ($('.comment').length==0) {
+              start -=1;
+              console.log(start);
+              if ($('.comment').length==0 && $('#show_more').length==0) {
                 $('#comments').html("<h2>Комментарии:</h2> <p id='noComments'>Здесь ещё нет ни одного комментария. Будьте первым!</p>");
               }
   
@@ -310,16 +279,47 @@ if (!isset($_SESSION['login'])) {
             "good_id": good_id,
             "text_comment": text_comment
           },
+          success: AddAjaxSuccess
+        });
+
+        function AddAjaxSuccess(){
+              $.ajax({
+                method: "POST",
+                url: "comments/show_comments.php",
+                data: {
+                  id:good_id,
+                  start:start,
+                  quantity:100
+                },
+              success: function(data) {
+                    $("#comments").append(data);
+                    start = document.getElementsByClassName('comment').length;
+                    console.log(start);
+                  }
+
+                });
+                $('#show_more').detach();
+                $('#noComments').detach();
+
+                $('#addCommentArea').focus().val('').blur();
+                $('#add_comment').addClass('disabled').unbind('click');
+          }
+};
+
+function show_more_comment(id) {
+        $.ajax({
+          method: "POST",
+          url: "comments/show_comments.php",
+          data: {
+            id:id,
+            start:start
+          },
           success: function(data) {
             //добавляем комментарий в конец контейнера
             $("#comments").append(data);
+            $('#show_more').detach();
 
-            $('#addCommentArea').val('');
-            $('#add_comment').addClass('disabled');
-
-            if ($('.comment').length>0) {
-                $('#noComments').detach();
-              }
+            start = document.getElementsByClassName('comment').length;;
           },
           error: function(er) {
             console.log(er);
